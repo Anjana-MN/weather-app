@@ -1,5 +1,7 @@
 package com.project.weatherforecast.service.impl;
 
+import com.project.weatherforecast.bean.Response;
+import com.project.weatherforecast.bean.TimeWindowResponse;
 import com.project.weatherforecast.bean.Units;
 import com.project.weatherforecast.bean.data.WeatherDataList;
 import com.project.weatherforecast.exception.BaseException;
@@ -44,7 +46,7 @@ public class WeatherServiceImpl implements WeatherService {
     private String weatherApiInUnits;
 
     @Override
-    public Object fetchWeatherData(Map<String, String> inputParam) {
+    public Response fetchWeatherData(Map<String, String> inputParam) {
         String queryParams = commonUtils.buildQuery(inputParam,weatherQueryMap);
         String url = weatherApi.concat(queryParams);
         WeatherDataList weatherResponse = restTemplate.getForObject(url,WeatherDataList.class);
@@ -58,13 +60,7 @@ public class WeatherServiceImpl implements WeatherService {
         inputParam.put("units",Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());
         String queryParams = commonUtils.buildQuery(inputParam,weatherQueryMap);
         String url = weatherApiInUnits.concat(queryParams);
-        WeatherDataList weatherDataList;
-        try{
-            weatherDataList = restTemplate.getForObject(url,WeatherDataList.class);
-        }catch (Exception e){
-            log.info(String.valueOf(e));
-            throw new BaseException(UUID.randomUUID(), HttpStatus.BAD_REQUEST,e.getMessage());
-        }
+        WeatherDataList weatherDataList = get(url);
         map.put("data",weatherUtils.fetchTempList(weatherDataList));
         return map;
     }
@@ -75,26 +71,29 @@ public class WeatherServiceImpl implements WeatherService {
         inputParam.put("units",Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());
         String queryParams = commonUtils.buildQuery(inputParam,weatherQueryMap);
         String url = weatherApiInUnits.concat(queryParams);
-        WeatherDataList weatherDataList;
-        weatherDataList = get(url);
-        Map<DayOfWeek, Double> dailyTemperature = new TreeMap<>();
+        WeatherDataList weatherDataList = get(url);
+        List<TimeWindowResponse> response = new LinkedList<>();
+        Map<String, Double> dailyTemperature = new HashMap<>();
         weatherDataList.getWeatherForecastedDataList().forEach((forecastedData)-> {
             List<Double> temps = new ArrayList<>();
-            Instant instant = Instant.ofEpochSecond(Long.parseLong(forecastedData.getDate()));
-            LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
-                    ZoneId.systemDefault());
-            String dateKey = weatherUtils.fetchDate(forecastedData.getDate());
-            if (!dailyTemperature.containsKey(localDateTime.getDayOfWeek())) {
+            String dateKey = forecastedData.getDateText().substring(0,10);
+            if (!dailyTemperature.containsKey(dateKey)) {
                 temps = weatherDataList.getWeatherForecastedDataList().stream().filter(w->
-                        weatherUtils.fetchDate(w.getDate()).equalsIgnoreCase(dateKey))
+                        w.getDateText().contains(dateKey))
                 .map(w->w.getTemperature().getTemperature()).collect(Collectors.toList());
             }
             if(!temps.isEmpty()) {
-                dailyTemperature.put(localDateTime.getDayOfWeek(), (double) Math.round(
-                        temps.stream().mapToDouble(Double::doubleValue).sum() / temps.size()));
+                Double avgTemp = (double) Math.round(
+                        temps.stream().mapToDouble(Double::doubleValue).sum() / temps.size());
+                dailyTemperature.put(forecastedData.getDateText().substring(0,10), avgTemp);
+                TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
+                timeWindowResponse.setDateText(weatherUtils.fetchDay(forecastedData.getDate()));
+                timeWindowResponse.setTemperature(avgTemp);
+                timeWindowResponse.setWeatherIcon(forecastedData.getWeather().get(0).getWeatherIcon());
+                response.add(timeWindowResponse);
             }
         });
-        return dailyTemperature;
+        return response;
     }
 
     private WeatherDataList get(String url)

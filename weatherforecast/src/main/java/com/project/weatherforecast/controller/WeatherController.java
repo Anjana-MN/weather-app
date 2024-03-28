@@ -37,7 +37,7 @@ public class WeatherController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/temperaturelist")
     public ResponseEntity<Object> getTemperatures(
-            @RequestParam(value = "count", name="count", defaultValue="15") String count,
+            @RequestParam(value = "count", name="count", defaultValue="5") String count,
             @RequestParam(value = "city", name="city") String city,
             @RequestParam(value = "units", name="units", defaultValue="celsius") String units
     ) throws BaseException {
@@ -60,7 +60,8 @@ public class WeatherController {
         inputParam.put("count",count);
         inputParam.put("city",city);
         inputParam.put("units",units);
-        Object responseList = weatherService.fetchDailyForeCast(inputParam);
-        return ResponseEntity.status(HttpStatus.OK).body(responseList);
+        Map<String,Object> data = new HashMap<>();
+        data.put("dailyForecast",weatherService.fetchDailyForeCast(inputParam));
+        return ResponseEntity.status(HttpStatus.OK).body(data);
     }
 }

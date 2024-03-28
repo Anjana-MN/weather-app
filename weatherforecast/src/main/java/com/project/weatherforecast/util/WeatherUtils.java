@@ -18,14 +18,12 @@ import java.util.*;
 public class WeatherUtils {
 
     public Response processWeatherResponse(WeatherDataList weatherDataList) {
-        List<WeatherData> responseList = new ArrayList<>();
         Response response = new Response();
         WeatherForecastedData forecastedData = weatherDataList.getWeatherForecastedDataList().get(0);
         City city = weatherDataList.getCity();
         response.setSunRise(fetchTime(city.getSunRise()));
         response.setSunSet(fetchTime(city.getSunSet()));
         BeanUtils.copyProperties(city.getCoordinates(),response.getCoordinates());
-//        weatherDataList.getWeatherForecastedDataList().forEach((weatherData)->{
             WeatherData data = new WeatherData();
             Temperature temperature = forecastedData.getTemperature();
             Wind wind = forecastedData.getWind();
@@ -55,9 +53,6 @@ public class WeatherUtils {
             if(2.237*Double.parseDouble(forecastedData.getWind().getGust())>39){
                 data.setAdditionalDescription("Don’t step out! A Storm is brewing!");
             }
-
-//            responseList.add(data);
-//        });
         response.setWeatherData(data);
         return response;
     }
@@ -67,26 +62,21 @@ public class WeatherUtils {
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
                 ZoneId.systemDefault());
         String time = localDateTime.getHour()+":"+localDateTime.getMinute();
-        return LocalTime.parse(time, DateTimeFormatter.ofPattern("H:mm")).
-                format(DateTimeFormatter.ofPattern("hh:mm a"));
+        return LocalTime.parse(time, DateTimeFormatter.ofPattern("H:m")).
+                format(DateTimeFormatter.ofPattern("hh:m a"));
 
     }
 
     public Object fetchTempList(WeatherDataList weatherDataList) {
-        List<TimeWindowResponse> temperatureList = new ArrayList<>();
+        List<TimeWindowResponse> temperatureList = new LinkedList<>();
         weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
-//            if(fetchDay(weatherForecastedData.getDate()).equals(LocalDate.now().getDayOfWeek().compareTo()))
-//            temperatureList.put(
-//                    fetchDay(weatherForecastedData.getDate()).concat(
-//                    weatherForecastedData.getDateText()),
-//                    weatherForecastedData.getTemperature().getTemperature());
             TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
-            timeWindowResponse.setDateText(weatherForecastedData.getDateText());
+            timeWindowResponse.setDateText(fetchTime(Long.valueOf(weatherForecastedData.getDate())));
             timeWindowResponse.setTemperature(weatherForecastedData.getTemperature().getTemperature());
             timeWindowResponse.setWeatherIcon(weatherForecastedData.getWeather().getFirst().getWeatherIcon());
             temperatureList.add(timeWindowResponse);
         });
-        return temperatureList.stream().sorted(Comparator.comparing(TimeWindowResponse::getDateText));
+        return temperatureList;
     }
 
     public String fetchDate(String epochSecond) {
