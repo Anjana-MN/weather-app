@@ -13,13 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,7 +84,7 @@ public class WeatherServiceImpl implements WeatherService {
                         temps.stream().mapToDouble(Double::doubleValue).sum() / temps.size());
                 dailyTemperature.put(forecastedData.getDateText().substring(0,10), avgTemp);
                 TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
-                timeWindowResponse.setDateText(weatherUtils.fetchDay(forecastedData.getDate()));
+                timeWindowResponse.setKey(weatherUtils.fetchDay(forecastedData.getDate()));
                 timeWindowResponse.setTemperature(avgTemp);
                 timeWindowResponse.setWeatherIcon(forecastedData.getWeather().get(0).getWeatherIcon());
                 response.add(timeWindowResponse);

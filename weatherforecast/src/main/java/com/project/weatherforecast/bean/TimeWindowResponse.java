@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class TimeWindowResponse {
 
-    private String dateText;
+    private String key;
     private Double temperature;
     private String weatherIcon;
 }

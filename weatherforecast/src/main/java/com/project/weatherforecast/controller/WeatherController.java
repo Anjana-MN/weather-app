@@ -52,7 +52,7 @@ public class WeatherController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/daily")
     public ResponseEntity<Object> getDailyForecast(
-            @RequestParam(value = "count", name="count", defaultValue="15") String count,
+            @RequestParam(value = "count", name="count", defaultValue="25") String count,
             @RequestParam(value = "city", name="city") String city,
             @RequestParam(value = "units", name="units", defaultValue="celsius") String units
     ) throws BaseException {

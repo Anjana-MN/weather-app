@@ -71,7 +71,7 @@ public class WeatherUtils {
         List<TimeWindowResponse> temperatureList = new LinkedList<>();
         weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
             TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
-            timeWindowResponse.setDateText(fetchTime(Long.valueOf(weatherForecastedData.getDate())));
+            timeWindowResponse.setKey(fetchTime(Long.valueOf(weatherForecastedData.getDate())));
             timeWindowResponse.setTemperature(weatherForecastedData.getTemperature().getTemperature());
             timeWindowResponse.setWeatherIcon(weatherForecastedData.getWeather().getFirst().getWeatherIcon());
             temperatureList.add(timeWindowResponse);
@@ -93,13 +93,7 @@ public class WeatherUtils {
         Instant instant = Instant.ofEpochSecond(epochSec);
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
                 ZoneId.systemDefault());
-        String date = localDateTime.getYear()+"-"+localDateTime.getMonthValue()+"-"+localDateTime.getDayOfMonth();
-        String dateString = LocalDate.parse(String.valueOf(localDateTime.getDayOfWeek())+" ".concat(date),
-                DateTimeFormatter.ofPattern("EEEE yyyy-m-dd")).format(DateTimeFormatter.ofPattern("EEE dd/MM"));
-
-//        String dateString = LocalDate.parse(String.valueOf(localDateTime.getDayOfWeek())+" ".concat(date),
-//                DateTimeFormatter.ofPattern("EEEE yyyy-m-dd")).format(DateTimeFormatter.ofPattern("EEE dd/MM"));
-        return dateString;
+        return localDateTime.getDayOfWeek().toString();
 
     }
 }
