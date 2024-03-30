@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TimeWindowResponse {
+public class TimeWindowResponse extends
+        RepresentationModel<TimeWindowResponse> {
 
     private String key;
     private Double temperature;

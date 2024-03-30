@@ -24,7 +24,7 @@ public class City {
     private String population;
 
     @JsonProperty("timezone")
-    private String timezone;
+    private Integer timezone;
 
     @JsonProperty("sunrise")
     private Long sunRise;

@@ -2,12 +2,13 @@ package com.project.weatherforecast.bean;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
 @Getter
 @Setter
-public class Response {
+public class Response extends RepresentationModel<Response> {
     private WeatherData weatherData;
     private String sunRise;
     private String sunSet;

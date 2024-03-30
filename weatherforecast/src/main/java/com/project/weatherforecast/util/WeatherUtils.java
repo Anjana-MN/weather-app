@@ -21,8 +21,8 @@ public class WeatherUtils {
         Response response = new Response();
         WeatherForecastedData forecastedData = weatherDataList.getWeatherForecastedDataList().get(0);
         City city = weatherDataList.getCity();
-        response.setSunRise(fetchTime(city.getSunRise()));
-        response.setSunSet(fetchTime(city.getSunSet()));
+        response.setSunRise(fetchTime(city.getSunRise(),city.getTimezone()));
+        response.setSunSet(fetchTime(city.getSunSet(),city.getTimezone()));
         BeanUtils.copyProperties(city.getCoordinates(),response.getCoordinates());
             WeatherData data = new WeatherData();
             Temperature temperature = forecastedData.getTemperature();
@@ -57,10 +57,11 @@ public class WeatherUtils {
         return response;
     }
 
-    private String fetchTime(Long epochSecond) {
+    private String fetchTime(Long epochSecond, Integer offset) {
         Instant instant = Instant.ofEpochSecond(epochSecond);
+        ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
-                ZoneId.systemDefault());
+                zoneId);
         String time = localDateTime.getHour()+":"+localDateTime.getMinute();
         return LocalTime.parse(time, DateTimeFormatter.ofPattern("H:m")).
                 format(DateTimeFormatter.ofPattern("hh:m a"));
@@ -71,7 +72,8 @@ public class WeatherUtils {
         List<TimeWindowResponse> temperatureList = new LinkedList<>();
         weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
             TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
-            timeWindowResponse.setKey(fetchTime(Long.valueOf(weatherForecastedData.getDate())));
+            timeWindowResponse.setKey(fetchTime(Long.valueOf(weatherForecastedData.getDate()),
+                    weatherDataList.getCity().getTimezone()));
             timeWindowResponse.setTemperature(weatherForecastedData.getTemperature().getTemperature());
             timeWindowResponse.setWeatherIcon(weatherForecastedData.getWeather().getFirst().getWeatherIcon());
             temperatureList.add(timeWindowResponse);

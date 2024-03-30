@@ -7,7 +7,8 @@ import java.util.Map;
 
 public interface WeatherService {
 
-    Response fetchWeatherData(Map<String,String> inputParam);
+    Object fetchWeatherData(Map<String,String> inputParam)
+            throws BaseException;
 
     Object fetchTemperatures(Map<String, String> inputParam)
             throws BaseException;
