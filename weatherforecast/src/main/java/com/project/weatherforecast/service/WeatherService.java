@@ -15,4 +15,7 @@ public interface WeatherService {
 
     Object fetchDailyForeCast(Map<String, String> inputParam)
             throws BaseException;
+
+    Object getWeatherForecastForNextThreeDays(Map<String, String> inputParam)
+            throws BaseException;
 }

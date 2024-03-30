@@ -4,10 +4,15 @@ import com.project.weatherforecast.bean.Response;
 import com.project.weatherforecast.bean.TimeWindowResponse;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.*;
+import com.project.weatherforecast.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +21,15 @@ import java.util.*;
 @Component
 @Slf4j
 public class WeatherUtils {
+
+    @Autowired
+    private CommonUtils commonUtils;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${#{weather.query.map}}")
+    private Map<String,String> weatherQueryMap;
 
     public Response processWeatherResponse(WeatherDataList weatherDataList) {
         Response response = new Response();
@@ -57,7 +71,7 @@ public class WeatherUtils {
         return response;
     }
 
-    private String fetchTime(Long epochSecond, Integer offset) {
+    public String fetchTime(Long epochSecond, Integer offset) {
         Instant instant = Instant.ofEpochSecond(epochSecond);
         ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
@@ -97,5 +111,21 @@ public class WeatherUtils {
                 ZoneId.systemDefault());
         return localDateTime.getDayOfWeek().toString();
 
+    }
+
+    public WeatherDataList get(String url, Map<String,String> inputParam)
+            throws BaseException {
+        WeatherDataList weatherDataList;
+        String queryParams = commonUtils.buildQuery(inputParam,weatherQueryMap);
+        url = url.concat(queryParams);
+        try{
+            weatherDataList = restTemplate.getForObject(url,WeatherDataList.class);
+        }catch (HttpClientErrorException e){
+            log.info("Exception: {}{}{}",UUID.randomUUID(), e.getStatusCode(),
+                    e.getMessage());
+            throw new BaseException(UUID.randomUUID(), e.getStatusCode(),
+                    e.getMessage());
+        }
+        return weatherDataList;
     }
 }

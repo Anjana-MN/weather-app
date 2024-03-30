@@ -23,24 +23,42 @@ public class WeatherController {
     private WeatherService weatherService;
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/data")
-    public ResponseEntity<Object> getForecastForNextThreeDays(
-            @RequestParam(value = "count", name="count", required = false,defaultValue="15") String count,
-            @RequestParam(value = "city", name="city", required = true) String city
+    @GetMapping("/current")
+    public ResponseEntity<Object> getWeatherForecastForNextThreeDays(
+            @RequestParam(value = "count", name="count", required = false, defaultValue="1") String count,
+            @RequestParam(value = "city", name="city", required = true) String city,
+            @RequestParam(value = "units", name="units", required = false, defaultValue = "celsius") String units
     ) throws BaseException {
         Map<String,String> inputParam = new HashMap<>();
         inputParam.put("count",count);
         inputParam.put("city",city);
+        inputParam.put("units",units);
         Response responseList =
-                (Response) weatherService.fetchWeatherData(inputParam);
-        responseList.add(linkTo(methodOn(WeatherController.class).
-                getForecastForNextThreeDays(count,city)).withSelfRel());
+                (Response) weatherService.getWeatherForecastForNextThreeDays(inputParam);
+        responseList.add(linkTo(methodOn(WeatherController.class).getWeatherForecastForNextThreeDays(count,city,units)).withSelfRel());
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/temperaturelist")
-    public ResponseEntity<Object> getTemperatures(
+    @GetMapping("/current")
+    public ResponseEntity<Object> getCurrentWeatherData(
+            @RequestParam(value = "count", name="count", required = false, defaultValue="1") String count,
+            @RequestParam(value = "city", name="city", required = true) String city,
+            @RequestParam(value = "units", name="units", required = false, defaultValue = "celsius") String units
+    ) throws BaseException {
+        Map<String,String> inputParam = new HashMap<>();
+        inputParam.put("count",count);
+        inputParam.put("city",city);
+        inputParam.put("units",units);
+        Response responseList =
+                (Response) weatherService.fetchWeatherData(inputParam);
+        responseList.add(linkTo(methodOn(WeatherController.class).getCurrentWeatherData(count,city,units)).withSelfRel());
+        return ResponseEntity.status(HttpStatus.OK).body(responseList);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/timely/forecast")
+    public ResponseEntity<Object> getTimelyForecast(
             @RequestParam(value = "count", name="count", defaultValue="5") String count,
             @RequestParam(value = "city", name="city") String city,
             @RequestParam(value = "units", name="units", defaultValue="celsius") String units
@@ -53,7 +71,7 @@ public class WeatherController {
                 (List<TimeWindowResponse>) weatherService.fetchTemperatures(inputParam);
         for(TimeWindowResponse response: responseList) {
             response.add(
-                    linkTo(methodOn(WeatherController.class).getTemperatures(
+                    linkTo(methodOn(WeatherController.class).getTimelyForecast(
                             count, city, units)).withSelfRel());
         }
         Map<String,Object> data = new HashMap<>();
@@ -62,7 +80,7 @@ public class WeatherController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/daily")
+    @GetMapping("/daily/forecast")
     public ResponseEntity<Object> getDailyForecast(
             @RequestParam(value = "count", name="count", defaultValue="25") String count,
             @RequestParam(value = "city", name="city") String city,
@@ -77,7 +95,7 @@ public class WeatherController {
                 (List<TimeWindowResponse>) weatherService.fetchDailyForeCast(inputParam);
         for(TimeWindowResponse response: responseList) {
             response.add(
-                    linkTo(methodOn(WeatherController.class).getTemperatures(
+                    linkTo(methodOn(WeatherController.class).getTimelyForecast(
                             count, city, units)).withSelfRel());
         }
         data.put("dailyForecast",responseList);
