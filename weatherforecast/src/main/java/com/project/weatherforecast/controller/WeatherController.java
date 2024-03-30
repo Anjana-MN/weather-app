@@ -31,7 +31,8 @@ public class WeatherController {
         Map<String,String> inputParam = new HashMap<>();
         inputParam.put("count",count);
         inputParam.put("city",city);
-        Response responseList = weatherService.fetchWeatherData(inputParam);
+        Response responseList =
+                (Response) weatherService.fetchWeatherData(inputParam);
         responseList.add(linkTo(methodOn(WeatherController.class).
                 getForecastForNextThreeDays(count,city)).withSelfRel());
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
