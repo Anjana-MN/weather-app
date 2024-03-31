@@ -1,18 +1,11 @@
 package com.project.weatherforecast.util;
 
-import com.project.weatherforecast.bean.Response;
 import com.project.weatherforecast.bean.TimeWindowResponse;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.*;
-import com.project.weatherforecast.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -21,15 +14,6 @@ import java.util.*;
 @Component
 @Slf4j
 public class WeatherUtils {
-
-    @Autowired
-    private CommonUtils commonUtils;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Value("#{${weather.query.map}}")
-    private Map<String,String> weatherQueryMap;
 
     public WeatherData processWeatherResponse(WeatherForecastedData weatherForecastedData) {
             WeatherData weatherData = new WeatherData();
@@ -49,10 +33,9 @@ public class WeatherUtils {
         ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
                 zoneId);
-        String time = localDateTime.getHour()+":"+localDateTime.getMinute();
-        return LocalTime.parse(time, DateTimeFormatter.ofPattern("hh:m")).
-                format(DateTimeFormatter.ofPattern("hh:mm a"));
-
+        return LocalTime.parse(localDateTime.toString().substring(11,16),
+                DateTimeFormatter.ofPattern("H:m"))
+                .format(DateTimeFormatter.ofPattern("hh:mm a"));
     }
 
     public Object fetchTempList(WeatherDataList weatherDataList) {
@@ -95,22 +78,5 @@ public class WeatherUtils {
         ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
         return localDateTime.getDayOfWeek().toString();
-
-    }
-
-    public WeatherDataList get(String url, Map<String,String> inputParam)
-            throws BaseException {
-        WeatherDataList weatherDataList;
-        String queryParams = commonUtils.buildQuery(inputParam,weatherQueryMap);
-        url = url.concat(queryParams);
-        try{
-            weatherDataList = restTemplate.getForObject(url,WeatherDataList.class);
-        }catch (HttpClientErrorException e){
-            log.info("Exception: {}{}{}",UUID.randomUUID(), e.getStatusCode(),
-                    e.getMessage());
-            throw new BaseException(UUID.randomUUID(), e.getStatusCode(),
-                    e.getMessage());
-        }
-        return weatherDataList;
     }
 }

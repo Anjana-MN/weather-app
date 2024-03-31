@@ -3,6 +3,7 @@ package com.project.weatherforecast.controller;
 import com.project.weatherforecast.bean.Response;
 import com.project.weatherforecast.bean.ThreeDayForecastResponse;
 import com.project.weatherforecast.bean.TimeWindowResponse;
+import com.project.weatherforecast.config.ForecastTypeEnum;
 import com.project.weatherforecast.exception.BaseException;
 import com.project.weatherforecast.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class WeatherController {
         inputParam.put("city",city);
         inputParam.put("units",units);
         ThreeDayForecastResponse responseList =
-                (ThreeDayForecastResponse) weatherService.getWeatherForecastForNextThreeDays(inputParam);
+                (ThreeDayForecastResponse) weatherService.fetchWeatherData(inputParam,
+                        ForecastTypeEnum.THREE_DAY);
         responseList.add(linkTo(methodOn(WeatherController.class).getWeatherForecastForNextThreeDays(count,city,units)).withSelfRel());
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
@@ -52,7 +54,7 @@ public class WeatherController {
         inputParam.put("city",city);
         inputParam.put("units",units);
         Response responseList =
-                (Response) weatherService.fetchWeatherData(inputParam);
+                (Response) weatherService.fetchWeatherData(inputParam, ForecastTypeEnum.CURRENT);
         responseList.add(linkTo(methodOn(WeatherController.class).getCurrentWeatherData(count,city,units)).withSelfRel());
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
@@ -69,7 +71,7 @@ public class WeatherController {
         inputParam.put("city",city);
         inputParam.put("units",units);
         List<TimeWindowResponse> responseList =
-                (List<TimeWindowResponse>) weatherService.fetchTemperatures(inputParam);
+                (List<TimeWindowResponse>) weatherService.fetchWeatherData(inputParam, ForecastTypeEnum.TIMELY);
         for(TimeWindowResponse response: responseList) {
             response.add(
                     linkTo(methodOn(WeatherController.class).getTimelyForecast(
@@ -93,7 +95,7 @@ public class WeatherController {
         inputParam.put("units",units);
         Map<String,Object> data = new HashMap<>();
         List<TimeWindowResponse> responseList =
-                (List<TimeWindowResponse>) weatherService.fetchDailyForeCast(inputParam);
+                (List<TimeWindowResponse>) weatherService.fetchWeatherData(inputParam, ForecastTypeEnum.DAILY);
         for(TimeWindowResponse response: responseList) {
             response.add(
                     linkTo(methodOn(WeatherController.class).getTimelyForecast(
