@@ -1,6 +1,7 @@
 package com.project.weatherforecast.controller;
 
 import com.project.weatherforecast.bean.Response;
+import com.project.weatherforecast.bean.ThreeDayForecastResponse;
 import com.project.weatherforecast.bean.TimeWindowResponse;
 import com.project.weatherforecast.exception.BaseException;
 import com.project.weatherforecast.service.WeatherService;
@@ -23,7 +24,7 @@ public class WeatherController {
     private WeatherService weatherService;
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/current")
+    @GetMapping("/threedays")
     public ResponseEntity<Object> getWeatherForecastForNextThreeDays(
             @RequestParam(value = "count", name="count", required = false, defaultValue="1") String count,
             @RequestParam(value = "city", name="city", required = true) String city,
@@ -33,8 +34,8 @@ public class WeatherController {
         inputParam.put("count",count);
         inputParam.put("city",city);
         inputParam.put("units",units);
-        Response responseList =
-                (Response) weatherService.getWeatherForecastForNextThreeDays(inputParam);
+        ThreeDayForecastResponse responseList =
+                (ThreeDayForecastResponse) weatherService.getWeatherForecastForNextThreeDays(inputParam);
         responseList.add(linkTo(methodOn(WeatherController.class).getWeatherForecastForNextThreeDays(count,city,units)).withSelfRel());
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
@@ -57,7 +58,7 @@ public class WeatherController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/timely/forecast")
+    @GetMapping("/timely")
     public ResponseEntity<Object> getTimelyForecast(
             @RequestParam(value = "count", name="count", defaultValue="5") String count,
             @RequestParam(value = "city", name="city") String city,
@@ -80,7 +81,7 @@ public class WeatherController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/daily/forecast")
+    @GetMapping("/daily")
     public ResponseEntity<Object> getDailyForecast(
             @RequestParam(value = "count", name="count", defaultValue="25") String count,
             @RequestParam(value = "city", name="city") String city,

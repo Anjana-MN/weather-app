@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class Wind {
     @JsonProperty("speed")
-    private String windSpeed;
+    private Double windSpeed;
 
     @JsonProperty("deg")
     private String deg;

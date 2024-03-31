@@ -15,10 +15,10 @@ public class Temperature {
     private String feelsLike;
 
     @JsonProperty("temp_min")
-    private String minTemp;
+    private Double minTemp;
 
     @JsonProperty("temp_max")
-    private String maxTemp;
+    private Double maxTemp;
 
     @JsonProperty("pressure")
     private String pressure;

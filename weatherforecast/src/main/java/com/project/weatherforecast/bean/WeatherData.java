@@ -8,13 +8,13 @@ import java.time.DayOfWeek;
 @Setter
 public class WeatherData {
     private String dateText;
-    private DayOfWeek day;
+    private String day;
     private Double temperature;
     private String description;
     private String additionalDescription;
     private String feelsLike;
-    private String minTemp;
-    private String maxTemp;
+    private Double minTemp;
+    private Double maxTemp;
     private String humidity;
     private String windSpeed;
     private String weatherDetails;

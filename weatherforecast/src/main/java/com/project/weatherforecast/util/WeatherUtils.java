@@ -28,47 +28,20 @@ public class WeatherUtils {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${#{weather.query.map}}")
+    @Value("#{${weather.query.map}}")
     private Map<String,String> weatherQueryMap;
 
-    public Response processWeatherResponse(WeatherDataList weatherDataList) {
-        Response response = new Response();
-        WeatherForecastedData forecastedData = weatherDataList.getWeatherForecastedDataList().get(0);
-        City city = weatherDataList.getCity();
-        response.setSunRise(fetchTime(city.getSunRise(),city.getTimezone()));
-        response.setSunSet(fetchTime(city.getSunSet(),city.getTimezone()));
-        BeanUtils.copyProperties(city.getCoordinates(),response.getCoordinates());
-            WeatherData data = new WeatherData();
-            Temperature temperature = forecastedData.getTemperature();
-            Wind wind = forecastedData.getWind();
-            Weather weather = forecastedData.getWeather().getFirst();
-            Instant instant = Instant.ofEpochSecond(Long.parseLong(forecastedData.getDate()));
-            LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
-                    ZoneId.systemDefault());
-            data.setDay(localDateTime.getDayOfWeek());
-            BeanUtils.copyProperties(temperature,data);
-            BeanUtils.copyProperties(wind,data);
-            BeanUtils.copyProperties(weather,data);
-            BeanUtils.copyProperties(forecastedData,data);
-            BeanUtils.copyProperties(forecastedData,data);
-            BeanUtils.copyProperties(city,data);
-            BeanUtils.copyProperties(city,response);
-            if(!ObjectUtils.isEmpty(forecastedData.getRain())){
-                data.setDescription("Carry umbrella");
-            }
-            //units=metric for celsius, wind speed will be in meter per sec
-            if(temperature.getTemperature()>40.00){
-                data.setDescription("Use sunscreen lotion");
-            }
-            //1 meter per sec = 2.237 miles per hour
-            if(2.237*Double.parseDouble(forecastedData.getWind().getWindSpeed())>10.00){
-                data.setAdditionalDescription("It’s too windy, watch out!");
-            }
-            if(2.237*Double.parseDouble(forecastedData.getWind().getGust())>39){
-                data.setAdditionalDescription("Don’t step out! A Storm is brewing!");
-            }
-        response.setWeatherData(data);
-        return response;
+    public WeatherData processWeatherResponse(WeatherForecastedData weatherForecastedData) {
+            WeatherData weatherData = new WeatherData();
+            Temperature temperature = weatherForecastedData.getTemperature();
+            Wind wind = weatherForecastedData.getWind();
+            Weather weather = weatherForecastedData.getWeather().getFirst();
+            BeanUtils.copyProperties(temperature,weatherData);
+            BeanUtils.copyProperties(wind,weatherData);
+            BeanUtils.copyProperties(weather,weatherData);
+            BeanUtils.copyProperties(weatherForecastedData,weatherData);
+            BeanUtils.copyProperties(weatherForecastedData,weatherData);
+        return weatherData;
     }
 
     public String fetchTime(Long epochSecond, Integer offset) {
@@ -77,8 +50,8 @@ public class WeatherUtils {
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
                 zoneId);
         String time = localDateTime.getHour()+":"+localDateTime.getMinute();
-        return LocalTime.parse(time, DateTimeFormatter.ofPattern("H:m")).
-                format(DateTimeFormatter.ofPattern("hh:m a"));
+        return LocalTime.parse(time, DateTimeFormatter.ofPattern("hh:m")).
+                format(DateTimeFormatter.ofPattern("hh:mm a"));
 
     }
 
@@ -95,20 +68,32 @@ public class WeatherUtils {
         return temperatureList;
     }
 
-    public String fetchDate(String epochSecond) {
+    public Object fetchWeatherIcon(List<WeatherForecastedData> weatherForecastedDataList, Integer offset) {
+        Optional<WeatherForecastedData> forecastedData = weatherForecastedDataList.stream().filter(
+                weatherForecastedData -> Arrays.asList("11:00 AM", "11:30 AM").contains(fetchTime(
+                        Long.valueOf(weatherForecastedData.getDate()),
+                        offset))).findFirst();
+        if(forecastedData.isPresent()){
+            return forecastedData.get().getWeather().get(0).getWeatherIcon();
+        }else{
+            return weatherForecastedDataList.get(0).getWeather().get(0).getWeatherIcon();
+        }
+    }
+
+    public String fetchDate(String epochSecond, Integer offset) {
         Long epochSec = Long.valueOf(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
-                ZoneId.systemDefault());
+        ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
         return localDateTime.getYear()+"-"+localDateTime.getMonthValue()+"-"+localDateTime.getDayOfMonth();
 
     }
 
-    public String fetchDay(String epochSecond) {
+    public String fetchDay(String epochSecond, Integer offset) {
         Long epochSec = Long.valueOf(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
-                ZoneId.systemDefault());
+        ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
         return localDateTime.getDayOfWeek().toString();
 
     }

@@ -45,7 +45,7 @@ public class DailyForecastServiceImpl implements DataService {
                         temps.stream().mapToDouble(Double::doubleValue).sum() / temps.size());
                 dailyTemperature.put(forecastedData.getDateText().substring(0,10), avgTemp);
                 TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
-                timeWindowResponse.setKey(weatherUtils.fetchDay(forecastedData.getDate()));
+                timeWindowResponse.setKey(weatherUtils.fetchDay(forecastedData.getDate(), weatherDataList.getCity().getTimezone()));
                 timeWindowResponse.setTemperature(avgTemp);
                 timeWindowResponse.setWeatherIcon(forecastedData.getWeather().get(0).getWeatherIcon());
                 response.add(timeWindowResponse);
