@@ -12,6 +12,7 @@ import com.project.weatherforecast.util.WeatherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,8 +37,8 @@ public class DailyForecastServiceImpl implements DataService {
     }
 
     @Override
-    public Object fetchData(Map<String, String> inputParam)
-            throws BaseException {
+    @Cacheable(cacheNames = "DailyForecast", cacheManager = "cacheManager")
+    public Object fetchData(Map<String, String> inputParam) throws BaseException {
         inputParam.put("units",Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());
         WeatherDataList weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         List<TimeWindowResponse> response = new LinkedList<>();

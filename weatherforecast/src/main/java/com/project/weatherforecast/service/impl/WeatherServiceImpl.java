@@ -16,7 +16,8 @@ public class WeatherServiceImpl implements WeatherService {
     @Autowired
     private ForecastTypeStrategyFactory factory;
 
-    @Override public Object fetchWeatherData(Map<String, String> inputParam,
+    @Override
+    public Object fetchWeatherData(Map<String, String> inputParam,
             ForecastTypeEnum forecastTypeEnum) throws BaseException {
         DataService forecastTypeService = factory.
                 getForecastTypeStrategyServiceMap().get(forecastTypeEnum);

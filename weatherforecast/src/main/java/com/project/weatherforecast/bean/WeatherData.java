@@ -2,11 +2,12 @@ package com.project.weatherforecast.bean;
 
 import lombok.Getter;
 import lombok.Setter;
-import java.time.DayOfWeek;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
-public class WeatherData {
+public class WeatherData implements Serializable {
     private String dateText;
     private String day;
     private Double temperature;

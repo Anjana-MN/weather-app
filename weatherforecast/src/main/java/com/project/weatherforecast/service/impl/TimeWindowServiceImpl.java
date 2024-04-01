@@ -10,9 +10,8 @@ import com.project.weatherforecast.util.WeatherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -34,6 +33,7 @@ public class TimeWindowServiceImpl implements DataService {
     }
 
     @Override
+    @Cacheable(cacheNames = "TimelyForecast", cacheManager = "cacheManager")
     public Object fetchData(Map<String, String> inputParam)
             throws BaseException {
         inputParam.put("units",Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());

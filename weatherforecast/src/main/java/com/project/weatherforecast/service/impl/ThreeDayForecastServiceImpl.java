@@ -13,7 +13,7 @@ import com.project.weatherforecast.util.WeatherUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -38,7 +38,7 @@ public class ThreeDayForecastServiceImpl implements DataService {
     }
 
     @Override
-//    @Cacheable(cacheNames = "ThreeDayForecast", cacheManager = "cacheManager")
+    @Cacheable(cacheNames = "ThreeDayForecast", cacheManager = "cacheManager")
     public Object fetchData(Map<String, String> inputParam)
             throws BaseException {
         WeatherDataList
