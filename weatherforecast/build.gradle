@@ -28,6 +28,20 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//###	DEPENDENCY OVERRIDE END	###
+
+	implementation group: 'com.google.guava', name: 'guava', version: '25.0-jre'
+
+	implementation group: 'org.webjars', name: 'swagger-ui', version: '3.43.0'
+
+	//Junit
+	testImplementation 'junit:junit'
+
+	testImplementation group: 'org.mockito', name: 'mockito-core'
+//	testImplementation group: 'org.mockito', name:'powermock-api-mockito2'
+//	testImplementation group: 'org.mockito', name:'powermock-module-junit4'
+//	testImplementation group: 'org.mockito', name:'powermock-module-junit4-rule'
 }
 
 tasks.named('test') {
