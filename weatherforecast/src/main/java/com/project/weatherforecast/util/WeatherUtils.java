@@ -1,7 +1,5 @@
 package com.project.weatherforecast.util;
 
-import com.project.weatherforecast.bean.TimeWindowResponse;
-import com.project.weatherforecast.bean.TimeWindowResponseList;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.*;
 import lombok.extern.slf4j.Slf4j;
@@ -37,21 +35,6 @@ public class WeatherUtils {
         return LocalTime.parse(localDateTime.toString().substring(11,16),
                 DateTimeFormatter.ofPattern("H:m"))
                 .format(DateTimeFormatter.ofPattern("hh:mm a"));
-    }
-
-    public Object fetchTempList(WeatherDataList weatherDataList) {
-        TimeWindowResponseList temperatureList = new TimeWindowResponseList();
-        LinkedList<TimeWindowResponse> tempList = new LinkedList();
-        weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
-            TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
-            timeWindowResponse.setKey(fetchTime(Long.valueOf(weatherForecastedData.getDate()),
-                    weatherDataList.getCity().getTimezone()));
-            timeWindowResponse.setTemperature(weatherForecastedData.getTemperature().getTemperature());
-            timeWindowResponse.setWeatherIcon(weatherForecastedData.getWeather().getFirst().getWeatherIcon());
-            tempList.add(timeWindowResponse);
-        });
-        temperatureList.setTimeWindowResponses(tempList);
-        return temperatureList;
     }
 
     public Object fetchWeatherIcon(List<WeatherForecastedData> weatherForecastedDataList, Integer offset) {
