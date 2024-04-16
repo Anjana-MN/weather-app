@@ -47,14 +47,6 @@ public class WeatherUtilsTest {
     }
 
     @Test
-    public void testFetchTempList() throws IOException {
-        WeatherDataList weatherDataList = new ObjectMapper()
-                .readValue(new File("src/test/resources/json/MockWeatherDataList.json"),
-                        WeatherDataList.class);
-        assertNotNull(weatherUtils.fetchTempList(weatherDataList));
-    }
-
-    @Test
     public void testFetchWeatherIcon() throws IOException {
         WeatherDataList weatherDataList = new ObjectMapper()
                 .readValue(new File("src/test/resources/json/MockWeatherDataList.json"),

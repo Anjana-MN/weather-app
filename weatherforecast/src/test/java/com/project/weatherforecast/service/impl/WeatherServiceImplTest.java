@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.weatherforecast.bean.TimeWindowResponseList;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.WeatherDataList;
-import com.project.weatherforecast.config.ForecastTypeEnum;
-import com.project.weatherforecast.config.ForecastTypeStrategyFactory;
-import com.project.weatherforecast.service.DataService;
 import com.project.weatherforecast.util.CommonUtils;
 import com.project.weatherforecast.util.WeatherUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,28 +35,13 @@ public class WeatherServiceImplTest {
     private WeatherServiceImpl weatherService;
 
     @Mock
-    private ForecastTypeStrategyFactory factory;
-
-    @Mock
     private CommonUtils commonUtils;
-
-    @Mock
-    private TimeWindowServiceImpl timeWindowService;
 
     @Mock
     private WeatherUtils weatherUtils;
 
-    @Mock
-    private DataService dataService;
-
-    private Map<ForecastTypeEnum,DataService> forecastTypeService = new HashMap<>();
-
     @BeforeEach
     public void setup() {
-        forecastTypeService.put(ForecastTypeEnum.CURRENT, new CurrentWeatherServiceImpl());
-        forecastTypeService.put(ForecastTypeEnum.TIMELY, new TimeWindowServiceImpl());
-        forecastTypeService.put(ForecastTypeEnum.DAILY, new DailyForecastServiceImpl());
-        forecastTypeService.put(ForecastTypeEnum.THREE_DAY, new ThreeDayForecastServiceImpl());
         ReflectionTestUtils.setField(weatherService, "weatherApiInUnits",
                 "/api.openweathermap.org/data/2.5/forecast");
     }
