@@ -1,6 +1,7 @@
 package com.project.weatherforecast.util;
 
 import com.project.weatherforecast.bean.TimeWindowResponse;
+import com.project.weatherforecast.bean.TimeWindowResponseList;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.*;
 import lombok.extern.slf4j.Slf4j;
@@ -39,15 +40,17 @@ public class WeatherUtils {
     }
 
     public Object fetchTempList(WeatherDataList weatherDataList) {
-        List<TimeWindowResponse> temperatureList = new LinkedList<>();
+        TimeWindowResponseList temperatureList = new TimeWindowResponseList();
+        LinkedList<TimeWindowResponse> tempList = new LinkedList();
         weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
             TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
             timeWindowResponse.setKey(fetchTime(Long.valueOf(weatherForecastedData.getDate()),
                     weatherDataList.getCity().getTimezone()));
             timeWindowResponse.setTemperature(weatherForecastedData.getTemperature().getTemperature());
             timeWindowResponse.setWeatherIcon(weatherForecastedData.getWeather().getFirst().getWeatherIcon());
-            temperatureList.add(timeWindowResponse);
+            tempList.add(timeWindowResponse);
         });
+        temperatureList.setTimeWindowResponses(tempList);
         return temperatureList;
     }
 
