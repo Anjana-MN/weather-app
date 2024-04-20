@@ -5,10 +5,11 @@ import com.project.weatherforecast.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
+import org.json.JSONObject;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,8 +33,10 @@ public class CommonUtils {
         }catch (HttpClientErrorException e){
             log.info("Exception: {}{}{}", UUID.randomUUID(), e.getStatusCode(),
                     e.getMessage());
-            throw new BaseException(UUID.randomUUID(), e.getStatusCode(),
-                    e.getMessage());
+            JSONObject res;
+            res = new JSONObject(e.getResponseBodyAsString());
+            throw new BaseException(res.optString("message"),
+                    HttpStatusCode.valueOf(res.optInt("cod")));
         }
         return weatherDataList;
     }

@@ -4,6 +4,7 @@ import com.project.weatherforecast.bean.*;
 import com.project.weatherforecast.bean.data.City;
 import com.project.weatherforecast.bean.data.WeatherDataList;
 import com.project.weatherforecast.bean.data.WeatherForecastedData;
+import com.project.weatherforecast.exception.BaseException;
 import com.project.weatherforecast.service.WeatherService;
 import com.project.weatherforecast.util.CommonUtils;
 import com.project.weatherforecast.util.WeatherUtils;
@@ -29,7 +30,8 @@ public class WeatherServiceImpl implements WeatherService {
     private String weatherApiInUnits;
 
     @Override
-    public Object fetchCurrentWeather(Map<String, String> inputParam) {
+    public Object fetchCurrentWeather(Map<String, String> inputParam)
+            throws BaseException {
         Response response = new Response();
         WeatherDataList
                 weatherResponse = commonUtils.get(weatherApiInUnits,inputParam);
@@ -48,7 +50,8 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Object fetchTimelyForecast(Map<String, String> inputParam) {
+    public Object fetchTimelyForecast(Map<String, String> inputParam)
+            throws BaseException {
         inputParam.put("units", Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());
         WeatherDataList weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         TimeWindowResponseList temperatureList = new TimeWindowResponseList();
@@ -66,7 +69,8 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Object fetchDailyForecast(Map<String, String> inputParam) {
+    public Object fetchDailyForecast(Map<String, String> inputParam)
+            throws BaseException {
         inputParam.put("units",Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());
         WeatherDataList weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         List<TimeWindowResponse> response = new LinkedList<>();
@@ -95,7 +99,8 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Object fetchThreeDayForecast(Map<String, String> inputParam) {
+    public Object fetchThreeDayForecast(Map<String, String> inputParam)
+            throws BaseException {
         WeatherDataList
                 weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         ThreeDayForecastResponse response = new ThreeDayForecastResponse();
