@@ -36,7 +36,7 @@ public class CacheUtil {
     public Object getValueForKey(String key) {
         List<Object> value = new ArrayList<>(10);
         RedisConnection redisConnection =redisTemplate.getConnectionFactory().getConnection();
-        Set<byte[]>keys = redisConnection.keys(key.getBytes(StandardCharsets.UTF_8));
+        Set<byte[]> keys = redisConnection.keys(key.getBytes(StandardCharsets.UTF_8));
         for(byte[] bkey: keys){
             byte[] b = redisConnection.get(bkey);
             Object o = redisTemplate.getValueSerializer().deserialize(b);

@@ -24,7 +24,7 @@ public class CacheServiceImpl {
             output.put("data", keys);
         }
         catch(Exception e) {
-            throw new BaseException(UUID.randomUUID(), HttpStatusCode.valueOf(500), e.getMessage());
+            throw new BaseException(e.getMessage());
         }
         return output;
     }
@@ -36,7 +36,7 @@ public class CacheServiceImpl {
             List<Object> values = (List<Object>) cacheUtil.getValueForKey(key);
             output.put("values", values);
         } catch (Exception e){
-            throw new BaseException(UUID.randomUUID(),HttpStatusCode.valueOf(500),e.getMessage());
+            throw new BaseException(e.getMessage());
         }
         return output;
     }

@@ -11,6 +11,7 @@ import com.project.weatherforecast.util.WeatherUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -29,6 +30,7 @@ public class WeatherServiceImpl implements WeatherService {
     @Value("${weather.units.api}")
     private String weatherApiInUnits;
 
+    @Cacheable(value = "CurrentWeather", cacheManager = "cacheManager")
     @Override
     public Object fetchCurrentWeather(Map<String, String> inputParam)
             throws BaseException {
@@ -49,6 +51,7 @@ public class WeatherServiceImpl implements WeatherService {
         return response;
     }
 
+    @Cacheable(value = "TimelyForecast", cacheManager = "cacheManager")
     @Override
     public Object fetchTimelyForecast(Map<String, String> inputParam)
             throws BaseException {
@@ -68,6 +71,7 @@ public class WeatherServiceImpl implements WeatherService {
         return temperatureList;
     }
 
+    @Cacheable(value = "DailyForecast", cacheManager = "cacheManager")
     @Override
     public Object fetchDailyForecast(Map<String, String> inputParam)
             throws BaseException {
@@ -98,6 +102,7 @@ public class WeatherServiceImpl implements WeatherService {
         return response;
     }
 
+    @Cacheable(value = "ThreeDayForecast", cacheManager = "cacheManager")
     @Override
     public Object fetchThreeDayForecast(Map<String, String> inputParam)
             throws BaseException {
