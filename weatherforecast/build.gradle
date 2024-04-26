@@ -28,7 +28,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
-
+	implementation group: 'org.json', name: 'json', version: 20180130
 	//###	DEPENDENCY OVERRIDE END	###
 
 	implementation group: 'com.google.guava', name: 'guava', version: '25.0-jre'
@@ -46,4 +46,12 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+test {
+	jvmArgs "--add-opens","java.base/java.lang=ALL-UNNAMED"
+	testLogging {
+		events 'started', 'passed', 'skipped', 'failed'
+		exceptionFormat 'full'
+	}
 }
