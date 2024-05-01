@@ -29,7 +29,7 @@ public class WeatherUtils {
 
     public String fetchTime(Long epochSecond, Integer offset) {
         Instant instant = Instant.ofEpochSecond(epochSecond);
-        ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
+        ZoneId zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant,
                 zoneId);
         return LocalTime.parse(localDateTime.toString().substring(11,16),
@@ -50,18 +50,17 @@ public class WeatherUtils {
     }
 
     public String fetchDate(String epochSecond, Integer offset) {
-        Long epochSec = Long.valueOf(epochSecond);
+        long epochSec = Long.parseLong(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);
-        ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
+        ZoneId zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
-        return localDateTime.getYear()+"-"+localDateTime.getMonthValue()+"-"+localDateTime.getDayOfMonth();
-
+        return localDateTime.getDayOfMonth() + " " + localDateTime.getMonth() + " " +localDateTime.getYear();
     }
 
     public String fetchDay(String epochSecond, Integer offset) {
-        Long epochSec = Long.valueOf(epochSecond);
+        long epochSec = Long.parseLong(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);
-        ZoneId zoneId = ZoneOffset.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
+        ZoneId zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
         return localDateTime.getDayOfWeek().toString();
     }

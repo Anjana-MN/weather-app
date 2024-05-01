@@ -9,8 +9,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ThreeDayForecastResponse extends RepresentationModel<ThreeDayForecastResponse> implements
-        Serializable {
+public class ThreeDayForecastResponse
+        extends RepresentationModel<ThreeDayForecastResponse>
+        implements Serializable {
 
     private List<WeatherData> weatherData;
     private String country;

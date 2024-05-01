@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class WeatherData implements Serializable {
     private String dateText;
     private String day;
+    private String time;
     private Double temperature;
     private String description;
     private String additionalDescription;
@@ -17,7 +18,7 @@ public class WeatherData implements Serializable {
     private Double minTemp;
     private Double maxTemp;
     private String humidity;
-    private String windSpeed;
+    private Double windSpeed;
     private String weatherDetails;
     private String weatherIcon;
 }
