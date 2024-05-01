@@ -13,6 +13,7 @@ import java.util.List;
 public class TimeWindowResponseList
         extends RepresentationModel<TimeWindowResponseList>
         implements Serializable {
+    /** timeWindowResponses */
     private List<TimeWindowResponse> timeWindowResponses;
 
 }

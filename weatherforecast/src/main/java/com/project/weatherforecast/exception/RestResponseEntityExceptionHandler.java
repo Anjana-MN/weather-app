@@ -12,18 +12,32 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends
         ResponseEntityExceptionHandler {
-
+    /** The errorResponse */
     @Autowired
     private ErrorResponse errorResponse;
 
+    /**
+     * RestResponseEntityExceptionHandler
+     */
     public RestResponseEntityExceptionHandler() {
         super();
     }
 
+    /**
+     *
+     * @return errorResponse
+     */
     public ErrorResponse getErrorResponse() {
         return errorResponse;
     }
 
+    /**
+     *
+     * handling base exception
+     * @param ex ex
+     * @param request request
+     * @return response object
+     */
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<Object> handleBaseException(BaseException ex, WebRequest request){
         return handleExceptionInternal(ex, errorResponse.constructResponse(

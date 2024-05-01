@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Clouds {
+    /** all */
     @JsonProperty("all")
     private String all;
 }

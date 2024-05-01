@@ -38,6 +38,7 @@ import java.time.Duration;
 				@SecurityRequirement(name = "APIKEY", scopes = "write: read") })
 public class WeatherforecastApplication {
 
+	/** The connectTimeout */
 	@Value("${timeout}")
 	private int connectTimeout;
 
@@ -45,19 +46,36 @@ public class WeatherforecastApplication {
 		SpringApplication.run(WeatherforecastApplication.class, args);
 	}
 
+	/**
+	 * get connect timeout
+	 * @return connectTimeout
+	 */
 	public int getConnectTimeout() {
 		return connectTimeout;
 	}
 
+	/**
+	 * returns rest template bean
+	 * @param builder builder
+	 * @return RestTemplate
+	 */
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.setConnectTimeout(Duration.ofMillis(connectTimeout)).build();
 	}
 
+	/**
+	 * sets connect timeout
+	 * @param connectTimeout connectTimeout
+	 */
 	public void setConnectTimeout(int connectTimeout) {
 		this.connectTimeout = connectTimeout;
 	}
 
+	/**
+	 * returns cors configurer
+	 * @return WebMvcConfigurer
+	 */
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {

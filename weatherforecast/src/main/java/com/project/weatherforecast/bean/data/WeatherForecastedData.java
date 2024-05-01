@@ -8,24 +8,31 @@ import java.util.List;
 @Setter
 @Getter
 public class WeatherForecastedData {
+    /** date */
     @JsonProperty("dt")
     private String date;
+    /** weather */
     @JsonProperty("main")
     Temperature temperature;
+    /** cod */
     @JsonProperty("weather")
     List<Weather> weather;
+    /** clouds */
     @JsonProperty("clouds")
     Clouds clouds;
+    /** wind */
     @JsonProperty("wind")
     Wind wind;
+    /** visibility */
     @JsonProperty("visibility")
     String visibility;
+    /** pop */
     @JsonProperty("pop")
     String pop;
+    /** rain */
     @JsonProperty("rain")
     Rain rain;
-//    @JsonProperty("sys")
-//    System sys;
+    /** dateText */
     @JsonProperty("dt_txt")
     String dateText;
 }

@@ -7,10 +7,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class ErrorResponse {
 
+    /**
+     * The error response
+     */
     public ErrorResponse() {
         super();
     }
 
+    /**
+     * constructs error response
+     * @param message message
+     * @param httpStatusCode httpStatusCode
+     * @return error
+     */
     public String constructResponse(String message, HttpStatusCode httpStatusCode){
         final JSONObject error = new JSONObject();
         final JSONObject statusInfo = new JSONObject();

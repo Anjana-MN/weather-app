@@ -14,6 +14,11 @@ import java.util.*;
 @Slf4j
 public class WeatherUtils {
 
+    /**
+     * populates current weather data
+     * @param weatherForecastedData weatherForecastedData
+     * @return weatherData
+     */
     public WeatherData processWeatherResponse(WeatherForecastedData weatherForecastedData) {
             WeatherData weatherData = new WeatherData();
             Temperature temperature = weatherForecastedData.getTemperature();
@@ -27,6 +32,12 @@ public class WeatherUtils {
         return weatherData;
     }
 
+    /**
+     * fetches time
+     * @param epochSecond epochSecond
+     * @param offset offset
+     * @return time
+     */
     public String fetchTime(Long epochSecond, Integer offset) {
         Instant instant = Instant.ofEpochSecond(epochSecond);
         ZoneId zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
@@ -37,6 +48,12 @@ public class WeatherUtils {
                 .format(DateTimeFormatter.ofPattern("hh:mm a"));
     }
 
+    /**
+     * fetches weather icon
+     * @param weatherForecastedDataList weatherForecastedDataList
+     * @param offset offset
+     * @return weatherIcon
+     */
     public Object fetchWeatherIcon(List<WeatherForecastedData> weatherForecastedDataList, Integer offset) {
         Optional<WeatherForecastedData> forecastedData = weatherForecastedDataList.stream().filter(
                 weatherForecastedData -> Arrays.asList("11:00 AM", "11:30 AM").contains(fetchTime(
@@ -49,6 +66,12 @@ public class WeatherUtils {
         }
     }
 
+    /**
+     * fetches date
+     * @param epochSecond epochSecond
+     * @param offset offset
+     * @return date
+     */
     public String fetchDate(String epochSecond, Integer offset) {
         long epochSec = Long.parseLong(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);
@@ -57,6 +80,12 @@ public class WeatherUtils {
         return localDateTime.getDayOfMonth() + " " + localDateTime.getMonth() + " " +localDateTime.getYear();
     }
 
+    /**
+     * fetches day
+     * @param epochSecond epochSecond
+     * @param offset offset
+     * @return day
+     */
     public String fetchDay(String epochSecond, Integer offset) {
         long epochSec = Long.parseLong(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);

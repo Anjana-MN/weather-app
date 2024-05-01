@@ -17,13 +17,20 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class CommonUtils {
-
+    /** The restTemplate */
     @Autowired
     private RestTemplate restTemplate;
-
+    /** The weatherQueryMap */
     @Value("#{${weather.query.map}}")
     private Map<String,String> weatherQueryMap;
 
+    /**
+     * fetches weather data
+     * @param url url
+     * @param inputParam inputParam
+     * @return weatherDataList
+     * @throws BaseException BaseException
+     */
     @Cacheable(value = "WeatherData", cacheManager = "cacheManager", key = "'city='+#inputParam.get('city')+'&units='+#inputParam.get('units')+'&count='+#inputParam.get('count')")
     public WeatherDataList get(String url, Map<String,String> inputParam)
             throws BaseException {
@@ -46,6 +53,12 @@ public class CommonUtils {
         return weatherDataList;
     }
 
+    /**
+     * builds query param
+     * @param inputParam inputParam
+     * @param queryMap queryMap
+     * @return queryParam
+     */
     public String buildQuery(Map<String, String> inputParam,
             Map<String, String> queryMap) {
         StringBuilder builder = new StringBuilder();

@@ -15,10 +15,14 @@ import java.util.Set;
 @Component
 @Slf4j
 public class CacheUtil {
-
+    /** The redisTemplate */
     @Autowired
     private RedisTemplate redisTemplate;
 
+    /**
+     * fetches list of cache keys
+     * @return keysList
+     */
     public List<String> getKeys() {
         RedisConnection redisConnection =redisTemplate.getConnectionFactory().getConnection();
         Set<byte[]> redisKeys =redisConnection.keys("*".getBytes(
@@ -33,6 +37,11 @@ public class CacheUtil {
         return  keysList;
     }
 
+    /**
+     * fetches cache value for given key
+     * @param key key
+     * @return cache value for given key
+     */
     public Object getValueForKey(String key) {
         List<Object> value = new ArrayList<>(10);
         RedisConnection redisConnection =redisTemplate.getConnectionFactory().getConnection();

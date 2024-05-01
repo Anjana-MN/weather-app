@@ -19,9 +19,15 @@ import java.util.Map;
 @RequestMapping("/api/cache")
 public class CacheController {
 
+    /** The cacheService */
     @Autowired
     private CacheServiceImpl cacheService;
 
+    /**
+     * fetches cache keys
+     * @return response object
+     * @throws BaseException BaseException
+     */
     @GetMapping("")
     @Operation( summary = "Fetch Cache Keys",tags = "Cache", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
@@ -33,6 +39,12 @@ public class CacheController {
         return ResponseEntity.status(HttpStatus.OK).body(cacheService.getKeys());
     }
 
+    /**
+     * fetches the cache value for given key
+     * @param key key
+     * @return response object
+     * @throws BaseException BaseException
+     */
     @GetMapping("/{key}")
     @Operation( summary = "Fetch Cache Value For a Key",tags = "Cache", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),

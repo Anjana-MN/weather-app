@@ -11,10 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CacheServiceImpl {
-
+    /** The cacheUtil */
     @Autowired
     private CacheUtil cacheUtil;
 
+    /**
+     * get cache keys
+     * @return list of keys
+     * @throws BaseException BaseException
+     */
     public Object getKeys() throws BaseException {
         Map<String, Object> output = new ConcurrentHashMap<>();
         try {
@@ -27,6 +32,12 @@ public class CacheServiceImpl {
         return output;
     }
 
+    /**
+     * fetches the value for a cache key
+     * @param data data
+     * @return cahce value
+     * @throws BaseException BaseException
+     */
     public Object getValueForKey(Map<String,Object> data) throws BaseException{
         Map<String, Object> output = new ConcurrentHashMap<>();
         String key = (String) data.get("key");

@@ -12,9 +12,11 @@ import java.util.List;
 public class ThreeDayForecastResponse
         extends RepresentationModel<ThreeDayForecastResponse>
         implements Serializable {
-
+    /** weatherData */
     private List<WeatherData> weatherData;
+    /** country */
     private String country;
+    /** cityName */
     private String cityName;
 
 }

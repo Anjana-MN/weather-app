@@ -44,6 +44,11 @@ public class RedisConfiguration {
         return template;
     }
 
+    /**
+     * fetches cache manager
+     * @param factory factory
+     * @return cacheManager
+     */
     @Bean(name = "cacheManager")
     @Primary
     public CacheManager cacheManager(RedisConnectionFactory factory){

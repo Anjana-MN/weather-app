@@ -10,11 +10,17 @@ import java.util.List;
 @Setter
 public class Response extends RepresentationModel<Response> implements
         Serializable {
+    /** weatherData */
     private WeatherData weatherData;
+    /** sunRise */
     private String sunRise;
+    /** sunSet */
     private String sunSet;
+    /** country */
     private String country;
+    /** cityName */
     private String cityName;
+    /** coordinates */
     private Coordinates coordinates=new Coordinates();
 
 }

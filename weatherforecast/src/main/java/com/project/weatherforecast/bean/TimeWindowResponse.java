@@ -10,8 +10,10 @@ import java.io.Serializable;
 @Setter
 public class TimeWindowResponse extends
         RepresentationModel<TimeWindowResponse> implements Serializable {
-
+    /** key */
     private String key;
+    /** temperature */
     private Double temperature;
+    /** weatherIcon */
     private String weatherIcon;
 }

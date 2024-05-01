@@ -7,10 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Coordinates {
-
+    /** latitude */
     @JsonProperty("lat")
     private String latitude;
-
+    /** longitude */
     @JsonProperty("lon")
     private String longitude;
 }

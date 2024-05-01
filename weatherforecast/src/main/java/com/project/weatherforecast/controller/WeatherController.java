@@ -30,9 +30,18 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/api/weather/forecast")
 public class WeatherController {
 
+    /** The weatherService */
     @Autowired
     private WeatherService weatherService;
 
+    /**
+     * fetch forecast for next three days
+     * @param count count
+     * @param city city
+     * @param units units
+     * @return response object
+     * @throws BaseException BaseException
+     */
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/threedays")
     @Operation( summary = "Fetch Forecast for Three Days",tags = "Forecast", method = Constants.GET)
@@ -64,6 +73,14 @@ public class WeatherController {
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
 
+    /**
+     * fetch current weather details
+     * @param count count
+     * @param city city
+     * @param units units
+     * @return response object
+     * @throws BaseException BaseException
+     */
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/current")
     @Operation( summary = "Fetch Current Weather",tags = "Forecast", method = Constants.GET)
@@ -94,6 +111,14 @@ public class WeatherController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * fetch timely forecast
+     * @param count count
+     * @param city city
+     * @param units units
+     * @return response object
+     * @throws BaseException BaseException
+     */
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/timely")
     @Operation( summary = "Fetch Timely Forecast",tags = "Forecast", method = Constants.GET)
@@ -126,6 +151,14 @@ public class WeatherController {
         return ResponseEntity.status(HttpStatus.OK).body(data);
     }
 
+    /**
+     * fetch daily forecast
+     * @param count count
+     * @param city city
+     * @param units units
+     * @return response object
+     * @throws BaseException BaseException
+     */
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/daily")
     @Operation( summary = "Fetch Daily Forecast",tags = "Forecast", method = Constants.GET)

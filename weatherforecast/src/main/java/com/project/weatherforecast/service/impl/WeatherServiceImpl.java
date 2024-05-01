@@ -16,23 +16,32 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.List;
+import java.util.OptionalDouble;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class WeatherServiceImpl implements WeatherService {
-
+    /** The commonUtils */
     @Autowired
     private CommonUtils commonUtils;
-
+    /** The weatherUtils */
     @Autowired
     private WeatherUtils weatherUtils;
-
+    /** The weatherApiInUnits */
     @Value("${weather.units.api}")
     private String weatherApiInUnits;
 
+    /**
+     * fetches the current weather
+     * @param inputParam inputParam
+     * @return response
+     * @throws BaseException BaseException
+     */
     @Override
     public Object fetchCurrentWeather(Map<String, String> inputParam)
             throws BaseException {
@@ -57,6 +66,12 @@ public class WeatherServiceImpl implements WeatherService {
         return response;
     }
 
+    /**
+     * fetches timely forecast
+     * @param inputParam inputParam
+     * @return temperature list
+     * @throws BaseException BaseException
+     */
     @Cacheable(value = "TimelyForecast", cacheManager = "cacheManager")
     @Override
     public Object fetchTimelyForecast(Map<String, String> inputParam)
@@ -79,6 +94,12 @@ public class WeatherServiceImpl implements WeatherService {
         return temperatureList;
     }
 
+    /**
+     * fetches daily forecast
+     * @param inputParam inputParam
+     * @return temperature list
+     * @throws BaseException BaseException
+     */
     @Cacheable(value = "DailyForecast", cacheManager = "cacheManager")
     @Override
     public Object fetchDailyForecast(Map<String, String> inputParam)
@@ -112,6 +133,12 @@ public class WeatherServiceImpl implements WeatherService {
         return response;
     }
 
+    /**
+     * fetches forecast for three days
+     * @param inputParam inputParam
+     * @return ThreeDayForecastResponse
+     * @throws BaseException BaseException
+     */
     @Override
     public Object fetchThreeDayForecast(Map<String, String> inputParam)
             throws BaseException {
