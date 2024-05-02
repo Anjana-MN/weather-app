@@ -2,6 +2,13 @@ package com.project.weatherforecast.constants;
 
 public class Constants {
 
+    /**
+     * Instantiates a new constant.
+     */
+    private Constants() {
+        super();
+    }
+
     /** The COUNT */
     public static final String COUNT = "count";
     /** The UNITS */

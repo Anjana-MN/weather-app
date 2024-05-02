@@ -80,7 +80,7 @@ public class WeatherServiceImpl implements WeatherService {
         inputParam.put(Constants.UNITS, Units.valueOf(inputParam.get(Constants.UNITS).toUpperCase()).getApiUnits());
         WeatherDataList weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         TimeWindowResponseList temperatureList = new TimeWindowResponseList();
-        LinkedList<TimeWindowResponse> tempList = new LinkedList();
+        LinkedList tempList = new LinkedList();
         weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
             TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
             timeWindowResponse.setKey(weatherUtils.fetchTime(Long.valueOf(weatherForecastedData.getDate()),
@@ -105,13 +105,13 @@ public class WeatherServiceImpl implements WeatherService {
     public Object fetchDailyForecast(Map<String, String> inputParam)
             throws BaseException {
         log.info("Entering fetchDailyForecast");
-        inputParam.put("units",Units.valueOf(inputParam.get("units").toUpperCase()).getApiUnits());
+        inputParam.put(Constants.UNITS,Units.valueOf(inputParam.get(Constants.UNITS).toUpperCase()).getApiUnits());
         WeatherDataList weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         List<TimeWindowResponse> response = new LinkedList<>();
         Map<Object, List<WeatherForecastedData>> groupedData = weatherDataList.getWeatherForecastedDataList()
                 .stream().collect(Collectors.groupingBy(
                         weatherForecastedData -> weatherForecastedData.getDateText().substring(0,10)));
-        weatherDataList.getWeatherForecastedDataList().forEach((forecastedData)-> {
+        weatherDataList.getWeatherForecastedDataList().forEach(forecastedData-> {
             String dateKey = forecastedData.getDateText().substring(0,10);
             List<WeatherForecastedData> weatherForecastedDataList = groupedData.get(
                     dateKey);
@@ -153,7 +153,7 @@ public class WeatherServiceImpl implements WeatherService {
         weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
             List<WeatherForecastedData> weatherForecastedDataList = groupedData.get(
                     weatherForecastedData.getDateText().substring(0,10));
-            if(weatherForecastedDataList != null && !weatherForecastedDataList.isEmpty()) {
+            if(!ObjectUtils.isEmpty(weatherForecastedDataList)) {
                 double tempSum = weatherForecastedDataList.stream().mapToDouble(
                         w -> w.getTemperature().getTemperature()).sum();
                 double avgTemp = tempSum / (weatherForecastedDataList.size());
@@ -170,8 +170,8 @@ public class WeatherServiceImpl implements WeatherService {
                         weatherData);
                 BeanUtils.copyProperties(weatherForecastedData, weatherData);
                 weatherData.setTemperature(avgTemp);
-                weatherData.setMaxTemp(maxTemp.getAsDouble());
-                weatherData.setMinTemp(minTemp.getAsDouble());
+                weatherData.setMaxTemp(maxTemp.orElse(0.0));
+                weatherData.setMinTemp(minTemp.orElse(0.0));
                 City city = weatherDataList.getCity();
                 weatherData.setDay(weatherUtils.fetchDay(weatherForecastedData.getDate(), city.getTimezone()));
                 weatherData.setTime(weatherUtils.fetchTime(Long.valueOf(weatherForecastedData.getDate()),city.getTimezone()));
@@ -181,21 +181,8 @@ public class WeatherServiceImpl implements WeatherService {
                         w -> !ObjectUtils.isEmpty(w.getRain())).findAny();
                 OptionalDouble wind =
                         weatherForecastedDataList.stream().mapToDouble(w -> w.getWind().getWindSpeed()).max();
-                Units unit = Units.valueOf(inputParam.get("units").toUpperCase());
-                if (rain.isPresent()) {
-                    weatherData.setDescription("Carry umbrella");
-                }
-                if (avgTemp > unit.getThresholdTemp()) {
-                    weatherData.setDescription("Use sunscreen lotion");
-                }
-                if (wind.isPresent() && wind.getAsDouble() > unit.getThresholdWindSpeed()) {
-                    weatherData.setAdditionalDescription(
-                            "It’s too windy, watch out!");
-                }
-                if (wind.isPresent() && wind.getAsDouble() > unit.getStormIndicator()) {
-                    weatherData.setAdditionalDescription(
-                            "Don’t step out! A Storm is brewing!");
-                }
+                Units unit = Units.valueOf(inputParam.get(Constants.UNITS).toUpperCase());
+                populateAdditionalFields(avgTemp, weatherData, rain, wind, unit);
                 weatherDataLinkedList.add(weatherData);
                 groupedData.remove(
                         weatherForecastedData.getDateText().substring(0, 10));
@@ -206,5 +193,32 @@ public class WeatherServiceImpl implements WeatherService {
         response.setCityName(weatherDataList.getCity().getCityName());
         log.info("Exiting fetchThreeDayForecast");
         return response;
+    }
+
+    /**
+     * populates additional fields
+     * @param avgTemp avgTemp
+     * @param weatherData weatherData
+     * @param rain rain
+     * @param wind wind
+     * @param unit unit
+     */
+    private void populateAdditionalFields(double avgTemp, WeatherData weatherData,
+            Optional<WeatherForecastedData> rain, OptionalDouble wind,
+            Units unit) {
+        if (rain.isPresent()) {
+            weatherData.setDescription("Carry umbrella");
+        }
+        if (avgTemp > unit.getThresholdTemp()) {
+            weatherData.setDescription("Use sunscreen lotion");
+        }
+        if (wind.isPresent() && wind.getAsDouble() > unit.getThresholdWindSpeed()) {
+            weatherData.setAdditionalDescription(
+                    "It’s too windy, watch out!");
+        }
+        if (wind.isPresent() && wind.getAsDouble() > unit.getStormIndicator()) {
+            weatherData.setAdditionalDescription(
+                    "Don’t step out! A Storm is brewing!");
+        }
     }
 }

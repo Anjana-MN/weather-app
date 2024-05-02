@@ -38,6 +38,7 @@ public class CommonUtilsTest {
         weatherQueryMap = new HashMap<>();
         weatherQueryMap.put("city","&q=");
         ReflectionTestUtils.setField(commonUtils,"weatherQueryMap",weatherQueryMap);
+        ReflectionTestUtils.setField(commonUtils,"appId","appId");
     }
 
     @Test
@@ -48,10 +49,10 @@ public class CommonUtilsTest {
         Map<String,String> inputParam = new HashMap<>();
         inputParam.put("city","Bangalore");
         when(restTemplate.getForObject(
-                "/api.openweathermap.org/data/2.5/forecast&q=Bangalore",WeatherDataList.class))
+                "/api.openweathermap.org/data/2.5/forecast?appId=appId&q=Bangalore",WeatherDataList.class))
                 .thenReturn(weatherDataList);
         assertNotNull(commonUtils.get(
-                "/api.openweathermap.org/data/2.5/forecast",inputParam));
+                "/api.openweathermap.org/data/2.5/forecast?appId=",inputParam));
     }
 
     @Test

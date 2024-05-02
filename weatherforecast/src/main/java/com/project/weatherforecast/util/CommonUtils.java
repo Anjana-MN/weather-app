@@ -23,6 +23,9 @@ public class CommonUtils {
     /** The weatherQueryMap */
     @Value("#{${weather.query.map}}")
     private Map<String,String> weatherQueryMap;
+    /** The appId */
+    @Value("${weather.appid}")
+    private String appId;
 
     /**
      * fetches weather data
@@ -35,9 +38,8 @@ public class CommonUtils {
     public WeatherDataList get(String url, Map<String,String> inputParam)
             throws BaseException {
         WeatherDataList weatherDataList;
+        inputParam.put("appId",appId);
         String queryParams = buildQuery(inputParam,weatherQueryMap);
-        String appId = System.getenv("APP_ID");
-        url = url.concat(appId);
         url = url.concat(queryParams);
         log.info("Calling weather data api: {}", url);
         try{
