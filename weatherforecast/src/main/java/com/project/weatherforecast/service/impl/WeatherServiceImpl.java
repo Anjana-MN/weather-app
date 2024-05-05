@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
@@ -57,8 +59,9 @@ public class WeatherServiceImpl implements WeatherService {
         BeanUtils.copyProperties(city,response);
         WeatherForecastedData weatherForecastedData = weatherResponse.getWeatherForecastedDataList().get(0);
         WeatherData weatherData = weatherUtils.processWeatherResponse(weatherForecastedData);
+        Instant current = Instant.now();
         weatherData.setDay(weatherUtils.fetchDay(weatherForecastedData.getDate(),city.getTimezone()));
-        weatherData.setTime(weatherUtils.fetchTime(Long.valueOf(weatherForecastedData.getDate()),city.getTimezone()));
+        weatherData.setTime(weatherUtils.fetchTime(current.getEpochSecond(),city.getTimezone()));
         weatherData.setDateText(weatherUtils.fetchDate(weatherForecastedData.getDate(),city.getTimezone()));
         BeanUtils.copyProperties(city,weatherData);
         response.setWeatherData(weatherData);
@@ -90,7 +93,7 @@ public class WeatherServiceImpl implements WeatherService {
             tempList.add(timeWindowResponse);
         });
         temperatureList.setTimeWindowResponses(tempList);
-        log.info("Entering fetchTimelyForecast");
+        log.info("Exiting fetchTimelyForecast");
         return temperatureList;
     }
 
@@ -129,7 +132,7 @@ public class WeatherServiceImpl implements WeatherService {
                 groupedData.remove(dateKey);
             }
         });
-        log.info("Entering fetchDailyForecast");
+        log.info("Exiting fetchDailyForecast");
         return response;
     }
 

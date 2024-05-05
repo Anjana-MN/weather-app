@@ -90,7 +90,7 @@ public class WeatherUtils {
         long epochSec = Long.parseLong(epochSecond);
         Instant instant = Instant.ofEpochSecond(epochSec);
         ZoneId zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
-        return localDateTime.getDayOfWeek().toString();
+        LocalDate localDate = LocalDate.ofInstant(instant, zoneId);
+        return localDate.getDayOfWeek().toString();
     }
 }
