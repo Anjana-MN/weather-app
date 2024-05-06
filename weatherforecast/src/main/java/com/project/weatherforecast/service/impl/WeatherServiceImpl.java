@@ -1,6 +1,11 @@
 package com.project.weatherforecast.service.impl;
 
-import com.project.weatherforecast.bean.*;
+import com.project.weatherforecast.bean.TimeWindowResponse;
+import com.project.weatherforecast.bean.TimeWindowResponseList;
+import com.project.weatherforecast.bean.Response;
+import com.project.weatherforecast.bean.Units;
+import com.project.weatherforecast.bean.WeatherData;
+import com.project.weatherforecast.bean.ThreeDayForecastResponse;
 import com.project.weatherforecast.bean.data.City;
 import com.project.weatherforecast.bean.data.WeatherDataList;
 import com.project.weatherforecast.bean.data.WeatherForecastedData;
@@ -111,17 +116,24 @@ public class WeatherServiceImpl implements WeatherService {
         inputParam.put(Constants.UNITS,Units.valueOf(inputParam.get(Constants.UNITS).toUpperCase()).getApiUnits());
         WeatherDataList weatherDataList = commonUtils.get(weatherApiInUnits,inputParam);
         List<TimeWindowResponse> response = new LinkedList<>();
+        //grouping the data according to date
         Map<Object, List<WeatherForecastedData>> groupedData = weatherDataList.getWeatherForecastedDataList()
                 .stream().collect(Collectors.groupingBy(
                         weatherForecastedData -> weatherForecastedData.getDateText().substring(0,10)));
+        //iterating through the weather data
         weatherDataList.getWeatherForecastedDataList().forEach(forecastedData-> {
             String dateKey = forecastedData.getDateText().substring(0,10);
             List<WeatherForecastedData> weatherForecastedDataList = groupedData.get(
                     dateKey);
             if (weatherForecastedDataList != null) {
+                if(weatherDataList.getCity().getTimezone()<0){
+                    forecastedData = weatherForecastedDataList.getLast();
+                }
+                //calcuate average temperature
                 double tempSum = weatherForecastedDataList.stream().mapToDouble(
                         w -> w.getTemperature().getTemperature()).sum();
                 double avgTemp = tempSum / (weatherForecastedDataList.size());
+                //populate response
                 TimeWindowResponse timeWindowResponse = new TimeWindowResponse();
                 timeWindowResponse.setKey(weatherUtils.fetchDay(forecastedData.getDate(),
                         weatherDataList.getCity().getTimezone()));
@@ -129,6 +141,7 @@ public class WeatherServiceImpl implements WeatherService {
                 timeWindowResponse.setWeatherIcon((String) weatherUtils.fetchWeatherIcon(
                         weatherForecastedDataList,weatherDataList.getCity().getTimezone()));
                 response.add(timeWindowResponse);
+                //removing the data from groupedData
                 groupedData.remove(dateKey);
             }
         });
@@ -157,6 +170,9 @@ public class WeatherServiceImpl implements WeatherService {
             List<WeatherForecastedData> weatherForecastedDataList = groupedData.get(
                     weatherForecastedData.getDateText().substring(0,10));
             if(!ObjectUtils.isEmpty(weatherForecastedDataList)) {
+                if(weatherDataList.getCity().getTimezone()<0){
+                    weatherForecastedData = weatherForecastedDataList.getLast();
+                }
                 double tempSum = weatherForecastedDataList.stream().mapToDouble(
                         w -> w.getTemperature().getTemperature()).sum();
                 double avgTemp = tempSum / (weatherForecastedDataList.size());

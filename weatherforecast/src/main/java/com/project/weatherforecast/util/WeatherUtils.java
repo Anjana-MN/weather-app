@@ -1,14 +1,24 @@
 package com.project.weatherforecast.util;
 
 import com.project.weatherforecast.bean.WeatherData;
-import com.project.weatherforecast.bean.data.*;
+import com.project.weatherforecast.bean.data.WeatherForecastedData;
+import com.project.weatherforecast.bean.data.Temperature;
+import com.project.weatherforecast.bean.data.Wind;
+import com.project.weatherforecast.bean.data.Weather;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
 
 @Component
 @Slf4j

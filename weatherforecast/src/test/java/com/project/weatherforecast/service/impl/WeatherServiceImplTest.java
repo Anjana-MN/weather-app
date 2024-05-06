@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.weatherforecast.bean.TimeWindowResponseList;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.WeatherDataList;
+import com.project.weatherforecast.constants.Constants;
 import com.project.weatherforecast.util.CommonUtils;
 import com.project.weatherforecast.util.WeatherUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +24,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,9 +53,9 @@ public class WeatherServiceImplTest {
     @Test
     public void testFetchTimelyForecast() throws IOException {
         Map<String,String> inputParam = new HashMap<>();
-        inputParam.put("count","10");
-        inputParam.put("city","Bangalore");
-        inputParam.put("units","metric");
+        inputParam.put(Constants.COUNT,"10");
+        inputParam.put(Constants.CITY,"Bangalore");
+        inputParam.put(Constants.UNITS,"metric");
         WeatherDataList weatherDataList = new ObjectMapper().readValue(
                 new File("src/test/resources/json/MockWeatherDataList.json"),
                 WeatherDataList.class);
@@ -61,16 +65,16 @@ public class WeatherServiceImplTest {
         when(commonUtils.get(
                 "/api.openweathermap.org/data/2.5/forecast",inputParam))
                 .thenReturn(weatherDataList);
-        inputParam.put("units","celsius");
+        inputParam.put(Constants.UNITS,"celsius");
         assertNotNull(weatherService.fetchTimelyForecast(inputParam));
     }
 
     @Test
     public void testFetchCurrentWeather() throws IOException {
         Map<String,String> inputParam = new HashMap<>();
-        inputParam.put("count","10");
-        inputParam.put("city","Bangalore");
-        inputParam.put("units","metric");
+        inputParam.put(Constants.COUNT,"10");
+        inputParam.put(Constants.CITY,"Bangalore");
+        inputParam.put(Constants.UNITS,"metric");
         WeatherDataList weatherDataList = new ObjectMapper().readValue(
                 new File("src/test/resources/json/MockWeatherDataList.json"),
                 WeatherDataList.class);
@@ -83,16 +87,16 @@ public class WeatherServiceImplTest {
         when(weatherUtils.fetchTime(anyLong(),anyInt())).thenReturn("6:30 PM");
         when(weatherUtils.processWeatherResponse(any())).thenReturn(weatherData);
         when(weatherUtils.fetchDay(anyString(),anyInt())).thenReturn("MONDAY");
-        inputParam.put("units","celsius");
+        inputParam.put(Constants.UNITS,"celsius");
         assertNotNull(weatherService.fetchCurrentWeather(inputParam));
     }
 
     @Test
     public void testFetchDailyForecast() throws IOException {
         Map<String,String> inputParam = new HashMap<>();
-        inputParam.put("count","10");
-        inputParam.put("city","Bangalore");
-        inputParam.put("units","metric");
+        inputParam.put(Constants.COUNT,"10");
+        inputParam.put(Constants.CITY,"Bangalore");
+        inputParam.put(Constants.UNITS,"metric");
         WeatherDataList weatherDataList = new ObjectMapper().readValue(
                 new File("src/test/resources/json/MockWeatherDataList.json"),
                 WeatherDataList.class);
@@ -104,16 +108,16 @@ public class WeatherServiceImplTest {
                 .thenReturn(weatherDataList);
         when(weatherUtils.fetchDay(anyString(),anyInt())).thenReturn("MONDAY");
         when(weatherUtils.fetchWeatherIcon(any(),anyInt())).thenReturn("04n");
-        inputParam.put("units","celsius");
+        inputParam.put(Constants.UNITS,"celsius");
         assertNotNull(weatherService.fetchDailyForecast(inputParam));
     }
 
     @Test
     public void testFetchThreeDayForecast() throws IOException {
         Map<String,String> inputParam = new HashMap<>();
-        inputParam.put("count","10");
-        inputParam.put("city","Bangalore");
-        inputParam.put("units","metric");
+        inputParam.put(Constants.COUNT,"10");
+        inputParam.put(Constants.CITY,"Bangalore");
+        inputParam.put(Constants.UNITS,"metric");
         WeatherDataList weatherDataList = new ObjectMapper().readValue(
                 new File("src/test/resources/json/MockWeatherDataList.json"),
                 WeatherDataList.class);
@@ -125,7 +129,7 @@ public class WeatherServiceImplTest {
                 .thenReturn(weatherDataList);
         when(weatherUtils.fetchDay(anyString(),anyInt())).thenReturn("MONDAY");
         when(weatherUtils.fetchWeatherIcon(any(),anyInt())).thenReturn("04n");
-        inputParam.put("units","celsius");
+        inputParam.put(Constants.UNITS,"celsius");
         assertNotNull(weatherService.fetchThreeDayForecast(inputParam));
     }
 }
