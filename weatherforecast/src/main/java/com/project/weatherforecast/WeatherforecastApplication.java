@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,8 +22,7 @@ import java.time.Duration;
 
 @SpringBootApplication
 @EnableCaching
-@ComponentScan(basePackages = "com.project.weatherforecast")
-//@EnableAutoConfiguration
+@EnableAutoConfiguration
 @OpenAPIDefinition(info = @Info(title = "WeatherForecast API", version = "1.0", extensions = {
 		@Extension(properties = @ExtensionProperty(name = "x-api-repo",
 				value = "https://github.com/Anjana-MN/weather-app")),

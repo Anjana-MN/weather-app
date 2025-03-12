@@ -21,7 +21,8 @@
     @EnableWebSecurity
     public class SecurityConfig {
 
-        private final UserDetailsService userDetailsService;
+        @Autowired
+        private UserDetailsService userDetailsService;
 
         @Bean
         public AuthenticationProvider authenticationProvider(){
@@ -31,18 +32,12 @@
             return daoAuthenticationProvider;
         }
 
-        public SecurityConfig(UserDetailsService userDetailsService) {
-            this.userDetailsService = userDetailsService;
-        }
-
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)
                 throws Exception {
             return httpSecurity
                     .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
-                    .authorizeRequests()
-                    .requestMatchers("/api/user/register").permitAll()
-                    .anyRequest().authenticated().and()
+                    .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
                     .httpBasic(Customizer.withDefaults())
                     .sessionManagement(session -> session.sessionCreationPolicy(
                             SessionCreationPolicy.STATELESS))

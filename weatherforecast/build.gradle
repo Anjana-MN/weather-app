@@ -22,9 +22,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	implementation group: 'org.postgresql', name: 'postgresql'
-	implementation group:'org.springdoc',name:'springdoc-openapi-starter-webmvc-ui', version:'2.3.0'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.apache.httpcomponents.client5:httpclient5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	compileOnly 'org.projectlombok:lombok'
@@ -35,6 +35,12 @@ dependencies {
 	//###	DEPENDENCY OVERRIDE END	###
 
 	implementation group: 'com.google.guava', name: 'guava', version: '25.0-jre'
+
+	implementation (group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'){
+		exclude group: 'org.webjars', module: 'swagger-ui'
+	}
+
+	implementation group: 'org.webjars', name: 'swagger-ui', version: '3.43.0'
 
 	//Junit
 	testImplementation 'junit:junit'

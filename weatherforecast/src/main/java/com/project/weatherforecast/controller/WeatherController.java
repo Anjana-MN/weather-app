@@ -118,7 +118,8 @@ public class WeatherController {
      * @param units units
      * @return response object
      * @throws BaseException BaseException
-     */@CrossOrigin(origins = "localhost:3000")
+     */
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/timely")
     @Operation( summary = "Fetch Timely Forecast",tags = "Forecast", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
