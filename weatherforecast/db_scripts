@@ -1,0 +1,8 @@
+create table users_db (
+    userid serial not null,
+    username varchar(100) not null,
+    pwd varchar(100) not null,
+    userid primary key
+);
+
+create sequence users_db_seq increment by 1 owned by user_db.userid;

@@ -14,6 +14,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/login")
+    public ResponseEntity<String> getUsers(){
+        return ResponseEntity.status(HttpStatus.OK).body("Login Successful");
+    }
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(
             @RequestBody UserEntity userEntity

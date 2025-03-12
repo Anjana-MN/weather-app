@@ -1,14 +1,14 @@
 package com.project.weatherforecast.entity;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.persistence.Entity;
+
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "users_db")
 public class UserEntity {
     @Id
+    private Integer userid;
     private String username;
-    private String password;
+    private String pwd;
 }
