@@ -20,6 +20,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.apache.httpcomponents.client5:httpclient5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	compileOnly 'org.projectlombok:lombok'
@@ -27,8 +28,11 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation group: 'org.json', name: 'json', version: 20180130
-	//###	DEPENDENCY OVERRIDE END	###
-
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.cloud:spring-cloud-dependencies:2023.0.3'
+	implementation 'io.github.resilience4j:resilience4j-spring-boot2:1.7.0'
+	implementation 'io.github.resilience4j:resilience4j-core:1.7.0'  // For core components like CircuitBreaker and CircuitBreakerRegistry
 	implementation group: 'com.google.guava', name: 'guava', version: '25.0-jre'
 
 	implementation (group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'){

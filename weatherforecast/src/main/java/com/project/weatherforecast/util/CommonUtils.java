@@ -2,6 +2,7 @@ package com.project.weatherforecast.util;
 
 import com.project.weatherforecast.bean.data.WeatherDataList;
 import com.project.weatherforecast.exception.BaseException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +35,8 @@ public class CommonUtils {
      * @return weatherDataList
      * @throws BaseException BaseException
      */
-    @Cacheable(value = "WeatherData", cacheManager = "cacheManager", key = "'city='+#inputParam.get('city')+'&units='+#inputParam.get('units')+'&count='+#inputParam.get('count')")
+    @Cacheable(value = "WeatherData", cacheManager = "cacheManager", key = "'city='+#inputParam.get('city')+'&units='+#inputParam.get('units')+'&count='+#inputParam.get('count')", unless = "result == null || result.size() == 0")
+    @CircuitBreaker(name = "weatherService", fallbackMethod = "weatherDataFallback")
     public WeatherDataList get(String url, Map<String,String> inputParam)
             throws BaseException {
         WeatherDataList weatherDataList;
@@ -53,6 +55,12 @@ public class CommonUtils {
                     HttpStatusCode.valueOf(res.optInt("cod")));
         }
         return weatherDataList;
+    }
+
+    // Fallback method to handle failure
+    public WeatherDataList weatherDataFallback(String url, Map<String,String> inputParam, Exception ex) {
+        log.error("In fallback method {}",ex.getMessage());
+        return new WeatherDataList();
     }
 
     /**
