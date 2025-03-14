@@ -1,6 +1,11 @@
 package com.project.weatherforecast.service;
 
-import com.project.weatherforecast.exception.BaseException;
+import com.project.weatherforecast.service.impl.CurrentWeatherForecastDataProcessorImpl;
+import com.project.weatherforecast.service.impl.DailyWeatherForecastDataProcessor;
+import com.project.weatherforecast.service.impl.ThreeDayWeatherForecastDataProcessor;
+import com.project.weatherforecast.service.impl.TimelyForecastDataProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
