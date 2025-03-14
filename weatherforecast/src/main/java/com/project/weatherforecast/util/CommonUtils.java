@@ -35,7 +35,7 @@ public class CommonUtils {
      * @return weatherDataList
      * @throws BaseException BaseException
      */
-    @Cacheable(value = "WeatherData", cacheManager = "cacheManager", key = "'city='+#inputParam.get('city')+'&units='+#inputParam.get('units')+'&count='+#inputParam.get('count')", unless = "result == null || result.size() == 0")
+    @Cacheable(value = "WeatherData", cacheManager = "cacheManager", key = "'city='+#inputParam.get('city')+'&units='+#inputParam.get('units')+'&count='+#inputParam.get('count')", condition = "#weatherDataList != null || #weatherDataList.size() > 0")
     @CircuitBreaker(name = "weatherService", fallbackMethod = "weatherDataFallback")
     public WeatherDataList get(String url, Map<String,String> inputParam)
             throws BaseException {
