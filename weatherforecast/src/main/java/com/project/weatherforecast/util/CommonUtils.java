@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.json.JSONObject;
@@ -47,10 +48,9 @@ public class CommonUtils {
         try{
             weatherDataList = restTemplate.getForObject(url,WeatherDataList.class);
         }catch (HttpClientErrorException e){
-            log.info("Exception: {}{}{}", UUID.randomUUID(), e.getStatusCode(),
+            log.error("Exception: {}{}{}", UUID.randomUUID(), e.getStatusCode(),
                     e.getMessage());
-            JSONObject res;
-            res = new JSONObject(e.getResponseBodyAsString());
+            JSONObject res = new JSONObject(e.getResponseBodyAsString());
             throw new BaseException(res.optString("message"),
                     HttpStatusCode.valueOf(res.optInt("cod")));
         }

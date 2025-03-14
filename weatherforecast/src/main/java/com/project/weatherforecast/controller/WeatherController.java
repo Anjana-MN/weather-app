@@ -65,7 +65,7 @@ public class WeatherController {
         inputParam.put(Constants.CITY, city);
         inputParam.put(Constants.UNITS, units);
         ThreeDayForecastResponse responseList =
-                (ThreeDayForecastResponse) weatherService.fetchThreeDayForecast(
+                (ThreeDayForecastResponse) weatherService.getWeatherData("threeDay",
                         inputParam);
         responseList.add(linkTo(methodOn(
                 WeatherController.class).getWeatherForecastForNextThreeDays(
@@ -104,7 +104,7 @@ public class WeatherController {
         inputParam.put(Constants.CITY, city);
         inputParam.put(Constants.UNITS, units);
         Response response =
-                (Response) weatherService.fetchCurrentWeather(inputParam);
+                (Response) weatherService.getWeatherData("current",inputParam);
         response.add(
                 linkTo(methodOn(WeatherController.class).getCurrentWeatherData(
                         count, city, units)).withSelfRel());
@@ -141,7 +141,7 @@ public class WeatherController {
         inputParam.put(Constants.CITY, city);
         inputParam.put(Constants.UNITS, units);
         TimeWindowResponseList responseList =
-                (TimeWindowResponseList) weatherService.fetchTimelyForecast(
+                (TimeWindowResponseList) weatherService.getWeatherData("timely",
                         inputParam);
         responseList.add(
                 linkTo(methodOn(WeatherController.class).getTimelyForecast(
@@ -182,7 +182,7 @@ public class WeatherController {
         inputParam.put(Constants.UNITS, units);
         Map<String, Object> data = new HashMap<>();
         List<TimeWindowResponse> responseList =
-                (List<TimeWindowResponse>) weatherService.fetchDailyForecast(
+                (List<TimeWindowResponse>) weatherService.getWeatherData("daily",
                         inputParam);
         for (TimeWindowResponse response : responseList) {
             response.add(

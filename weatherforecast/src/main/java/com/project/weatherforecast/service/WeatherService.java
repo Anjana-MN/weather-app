@@ -2,43 +2,31 @@ package com.project.weatherforecast.service;
 
 import com.project.weatherforecast.exception.BaseException;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public interface WeatherService {
+@Service
+public class WeatherService {
 
-    /**
-     * fetches current weather details
-     * @param inputParam inputParam
-     * @return Response
-     * @throws BaseException BaseException
-     */
-    public Object fetchCurrentWeather(Map<String,String> inputParam)
-            throws BaseException;
+    private final Map<String, WeatherForecastDataProcessor> weatherProcessors;
 
-    /**
-     * fetches timely forecast
-     * @param inputParam inputParam
-     * @return temperature list
-     * @throws BaseException BaseException
-     */
-    public Object fetchTimelyForecast(Map<String,String> inputParam)
-            throws BaseException;
+    @Autowired
+    public WeatherService(CurrentWeatherForecastDataProcessorImpl currentWeatherForecastDataProcessor,
+                          DailyWeatherForecastDataProcessor dailyWeatherForecastDataProcessor,
+                          ThreeDayWeatherForecastDataProcessor threeDayWeatherForecastDataProcessor,
+                          TimelyForecastDataProcessor timelyForecastDataProcessor){
+        weatherProcessors = new HashMap<>();
+        weatherProcessors.put("current", currentWeatherForecastDataProcessor);
+        weatherProcessors.put("daily", dailyWeatherForecastDataProcessor);
+        weatherProcessors.put("threeDay", threeDayWeatherForecastDataProcessor);
+        weatherProcessors.put("timely", timelyForecastDataProcessor);
+    }
 
-    /**
-     * fetches daily forecast
-     * @param inputParam inputParam
-     * @return temperature list
-     * @throws BaseException BaseException
-     */
-    public Object fetchDailyForecast(Map<String,String> inputParam)
-            throws BaseException;
-
-    /**
-     * fetches forecast for next three days
-     * @param inputParam inputParam
-     * @return ThreeDayForecastResponse
-     * @throws BaseException BaseException
-     */
-    public Object fetchThreeDayForecast(Map<String,String> inputParam)
-            throws BaseException;
+    public Object getWeatherData(String key, Map<String,String> inputParam){
+        WeatherForecastDataProcessor processor = weatherProcessors.get(key);
+        if(processor == null){
+            return new IllegalArgumentException("Invalid processor");
+        }
+        return processor.fetchWeather(inputParam);
+    }
 }
