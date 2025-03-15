@@ -5,11 +5,13 @@ import com.project.weatherforecast.bean.Units;
 import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.*;
 import com.project.weatherforecast.constants.Constants;
+import com.project.weatherforecast.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -18,10 +20,7 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Arrays;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,7 +38,7 @@ public class WeatherUtils {
      * @param weatherForecastedData weatherForecastedData
      * @return weatherData
      */
-    public WeatherData processWeatherResponse(WeatherForecastedData weatherForecastedData) {
+    public WeatherData processWeatherResponse(WeatherForecastedData weatherForecastedData, List<WeatherForecastedData> weatherForecastedDataList) {
             WeatherData weatherData = new WeatherData();
             Temperature temperature = weatherForecastedData.getTemperature();
             Wind wind = weatherForecastedData.getWind();
@@ -48,7 +47,32 @@ public class WeatherUtils {
             BeanUtils.copyProperties(wind,weatherData);
             BeanUtils.copyProperties(weather,weatherData);
             BeanUtils.copyProperties(weatherForecastedData,weatherData);
+        OptionalDouble minTemp =
+                weatherForecastedDataList.stream().mapToDouble(w -> w.getTemperature().getMinTemp()).min();
+        OptionalDouble maxTemp =
+                weatherForecastedDataList.stream().mapToDouble(w -> w.getTemperature().getMaxTemp()).max();
+        weatherData.setMaxTemp(maxTemp.orElse(0.0));
+        weatherData.setMinTemp(minTemp.orElse(0.0));
         return weatherData;
+    }
+
+    public Map<String,Object> fetchWeatherMap(WeatherForecastedData forecastedData, Map<Object, List<WeatherForecastedData>> groupedData, WeatherDataList weatherDataList) {
+        Map<String,Object> weatherMap = new HashMap<>();
+        double avgTemp = 0L;
+        String dateKey = forecastedData.getDateText().substring(0,10);
+        List<WeatherForecastedData> weatherForecastedDataList = groupedData.remove(
+                dateKey);
+        if (!ObjectUtils.isEmpty(weatherForecastedDataList)) {
+            groupedData.remove(dateKey);
+            avgTemp = calAvgTemp(weatherForecastedDataList);
+            if(weatherDataList.getCity().getTimezone()<0){
+                forecastedData = weatherForecastedDataList.getLast();
+            }
+        }
+        weatherMap.put("weatherForecastedDataList", weatherForecastedDataList);
+        weatherMap.put("forecastedData", forecastedData);
+        weatherMap.put("avgTemp", avgTemp);
+        return weatherMap;
     }
 
     /**
@@ -119,11 +143,13 @@ public class WeatherUtils {
         return tempSum / (weatherForecastedDataList.size());
     }
 
-    public WeatherData setDateTime(WeatherData weatherData, WeatherForecastedData weatherForecastedData, City city) {
+    public WeatherData setDateTime(WeatherData weatherData, WeatherForecastedData weatherForecastedData, City city, List<WeatherForecastedData> weatherForecastedDataList) {
         Instant current = Instant.now();
         weatherData.setDay(fetchDay(weatherForecastedData.getDate(),city.getTimezone()));
         weatherData.setTime(fetchTime(current.getEpochSecond(),city.getTimezone()));
         weatherData.setDateText(fetchDate(weatherForecastedData.getDate(),city.getTimezone()));
+        weatherData.setWeatherIcon((String) fetchWeatherIcon(
+                weatherForecastedDataList,city.getTimezone()));
         return weatherData;
     }
     public TimeWindowResponse populateTimeWindowResponse(String key, String weatherIcon, double temp){
@@ -136,12 +162,25 @@ public class WeatherUtils {
 
     public WeatherDataList getWeatherDataList(Map<String, String> inputParam) {
         inputParam.put(Constants.UNITS, Units.valueOf(inputParam.get(Constants.UNITS).toUpperCase()).getApiUnits());
-        return commonUtils.get(weatherApiInUnits, inputParam);
+        try {
+            return commonUtils.get(weatherApiInUnits, inputParam);
+        } catch (BaseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Map<Object, List<WeatherForecastedData>> groupWeatherListByDate(WeatherDataList weatherDataList) {
         return weatherDataList.getWeatherForecastedDataList()
                 .stream().collect(Collectors.groupingBy(
                         weatherForecastedData -> weatherForecastedData.getDateText().substring(0, 10)));
+    }
+
+    public Integer adjustCountBasedOnCurrentTime(String count){
+        Calendar c = Calendar.getInstance();
+        int cnt = Integer.parseInt(count);
+        int currHour = c.get(Calendar.HOUR_OF_DAY);
+        cnt-=1;
+        cnt*=8;
+        return (int) (cnt+(24-Math.ceil(currHour)));
     }
 }

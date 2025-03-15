@@ -5,14 +5,17 @@ import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.City;
 import com.project.weatherforecast.bean.data.WeatherDataList;
 import com.project.weatherforecast.bean.data.WeatherForecastedData;
+import com.project.weatherforecast.constants.Constants;
 import com.project.weatherforecast.exception.BaseException;
 import com.project.weatherforecast.service.WeatherForecastDataProcessor;
 import com.project.weatherforecast.util.WeatherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 @Slf4j
@@ -31,20 +34,27 @@ public class CurrentWeatherForecastDataProcessorImpl implements WeatherForecastD
     @Override
     public Object fetchWeather(Map<String, String> inputParam)
             throws BaseException {
-        log.info("Entering fetchCurrentWeather");
+        log.info("fetching current weather for {} in {} units", inputParam.get(Constants.CITY), inputParam.get(Constants.UNITS));
         Response response = new Response();
-        WeatherDataList weatherResponse = weatherUtils.getWeatherDataList(inputParam);
-        City city = weatherResponse.getCity();
-        response.setSunRise(weatherUtils.fetchTime(city.getSunRise(),city.getTimezone()));
-        response.setSunSet(weatherUtils.fetchTime(city.getSunSet(),city.getTimezone()));
-        BeanUtils.copyProperties(city.getCoordinates(),response.getCoordinates());
-        BeanUtils.copyProperties(city,response);
-        WeatherForecastedData weatherForecastedData = weatherResponse.getWeatherForecastedDataList().getFirst();
-        WeatherData weatherData = weatherUtils.processWeatherResponse(weatherForecastedData);
-        weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city);
-        BeanUtils.copyProperties(city,weatherData);
-        response.setWeatherData(weatherData);
-        log.info("Exiting fetchCurrentWeather");
+        try {
+            WeatherDataList weatherResponse = weatherUtils.getWeatherDataList(inputParam);
+            City city = weatherResponse.getCity();
+            response.setSunRise(weatherUtils.fetchTime(city.getSunRise(), city.getTimezone()));
+            response.setSunSet(weatherUtils.fetchTime(city.getSunSet(), city.getTimezone()));
+            BeanUtils.copyProperties(city.getCoordinates(), response.getCoordinates());
+            BeanUtils.copyProperties(city, response);
+            WeatherForecastedData weatherForecastedData = weatherResponse.getWeatherForecastedDataList().getFirst();
+            WeatherData weatherData = weatherUtils.processWeatherResponse(weatherForecastedData, new ArrayList<>(){{add(weatherForecastedData);}});
+            weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city, new ArrayList<>(){{add(weatherForecastedData);}});
+            BeanUtils.copyProperties(city, weatherData);
+            response.setWeatherData(weatherData);
+        } catch (NullPointerException e) {
+            log.error("Null pointer exception occurred: {}", e.getMessage());
+            throw new BaseException("Data retrieval error", HttpStatusCode.valueOf(500));
+        } catch (Exception e) {
+            log.error("An unexpected error occurred: {}", e.getMessage());
+            throw new BaseException("Unexpected error", HttpStatusCode.valueOf(500));
+        }
         return response;
     }
 }
