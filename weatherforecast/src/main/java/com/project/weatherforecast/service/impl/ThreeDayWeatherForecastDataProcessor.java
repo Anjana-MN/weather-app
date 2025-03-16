@@ -56,11 +56,7 @@ public class ThreeDayWeatherForecastDataProcessor extends AbstractWeatherDataPro
                         weatherForecastedData, weatherForecastedDataList);
                 weatherData.setTemperature(avgTemp);
                 weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city, weatherForecastedDataList);
-                Optional<WeatherForecastedData> rain = weatherForecastedDataList.stream().filter(
-                        w -> !ObjectUtils.isEmpty(w.getRain())).findAny();
-                OptionalDouble wind =
-                        weatherForecastedDataList.stream().mapToDouble(w -> w.getWind().getWindSpeed()).max();
-                populateAdditionalFields(avgTemp, weatherData, rain, wind, unit);
+                populateAdditionalFields(avgTemp, weatherData, weatherForecastedDataList, unit);
                 weatherDataLinkedList.add(weatherData);
             }
         });

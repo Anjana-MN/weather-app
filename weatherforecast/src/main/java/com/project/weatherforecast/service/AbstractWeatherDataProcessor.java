@@ -9,6 +9,7 @@ import com.project.weatherforecast.exception.BaseException;
 import com.project.weatherforecast.util.WeatherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 
@@ -33,13 +34,16 @@ public abstract class AbstractWeatherDataProcessor {
      * populates additional fields
      * @param avgTemp avgTemp
      * @param weatherData weatherData
-     * @param rain rain
-     * @param wind wind
+     * @param weatherForecastedDataList weatherForecastedDataList
      * @param unit unit
      */
     protected void populateAdditionalFields(double avgTemp, WeatherData weatherData,
-                                          Optional<WeatherForecastedData> rain, OptionalDouble wind,
+                                            List<WeatherForecastedData> weatherForecastedDataList,
                                           Units unit) {
+        Optional<WeatherForecastedData> rain = weatherForecastedDataList.stream().filter(
+                w -> !ObjectUtils.isEmpty(w.getRain())).findAny();
+        OptionalDouble wind =
+                weatherForecastedDataList.stream().mapToDouble(w -> w.getWind().getWindSpeed()).max();
         if (rain.isPresent()) {
             weatherData.setDescription("Carry umbrella");
         }
