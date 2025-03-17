@@ -12,6 +12,7 @@ import com.project.weatherforecast.util.WeatherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -44,18 +45,23 @@ public class DailyWeatherForecastDataProcessor extends AbstractWeatherDataProces
     @Override
     public Object processWeatherData(WeatherDataList weatherDataList, Map<Object, List<WeatherForecastedData>> groupedData, Units unit) {
         List<TimeWindowResponse> response = new LinkedList<>();
-        weatherDataList.getWeatherForecastedDataList().forEach(forecastedData -> {
-            Map<String, Object> weatherMap = weatherUtils.fetchWeatherMap(forecastedData, groupedData, weatherDataList);
-            List<WeatherForecastedData> weatherForecastedDataList = (List<WeatherForecastedData>) weatherMap.get("weatherForecastedDataList");
-            if (!ObjectUtils.isEmpty(weatherForecastedDataList)) {
-                forecastedData = (WeatherForecastedData) weatherMap.get("forecastedData");
-                String key = weatherUtils.fetchDay(forecastedData.getDate(),
-                        weatherDataList.getCity().getTimezone());
-                String weatherIcon = (String) weatherUtils.fetchWeatherIcon(
-                        weatherForecastedDataList, weatherDataList.getCity().getTimezone());
-                response.add(weatherUtils.populateTimeWindowResponse(key, weatherIcon, (double) weatherMap.get("avgTemp")));
-            }
-        });
+        try {
+            weatherDataList.getWeatherForecastedDataList().forEach(forecastedData -> {
+                Map<String, Object> weatherMap = weatherUtils.fetchWeatherMap(forecastedData, groupedData, weatherDataList);
+                List<WeatherForecastedData> weatherForecastedDataList = (List<WeatherForecastedData>) weatherMap.get("weatherForecastedDataList");
+                if (!ObjectUtils.isEmpty(weatherForecastedDataList)) {
+                    forecastedData = (WeatherForecastedData) weatherMap.get("forecastedData");
+                    String key = weatherUtils.fetchDay(forecastedData.getDate(),
+                            weatherDataList.getCity().getTimezone());
+                    String weatherIcon = (String) weatherUtils.fetchWeatherIcon(
+                            weatherForecastedDataList, weatherDataList.getCity().getTimezone());
+                    response.add(weatherUtils.populateTimeWindowResponse(key, weatherIcon, (double) weatherMap.get("avgTemp")));
+                }
+            });
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage());
+            throw new BaseException(e.getMessage(), HttpStatusCode.valueOf(500));
+        }
         return response;
     }
 }

@@ -36,24 +36,27 @@ public class CurrentWeatherForecastDataProcessorImpl implements WeatherForecastD
             throws BaseException {
         log.info("fetching current weather for {} in {} units", inputParam.get(Constants.CITY), inputParam.get(Constants.UNITS));
         Response response = new Response();
-        try {
-            WeatherDataList weatherResponse = weatherUtils.getWeatherDataList(inputParam);
-            City city = weatherResponse.getCity();
-            response.setSunRise(weatherUtils.fetchTime(city.getSunRise(), city.getTimezone()));
-            response.setSunSet(weatherUtils.fetchTime(city.getSunSet(), city.getTimezone()));
-            BeanUtils.copyProperties(city.getCoordinates(), response.getCoordinates());
-            BeanUtils.copyProperties(city, response);
-            WeatherForecastedData weatherForecastedData = weatherResponse.getWeatherForecastedDataList().getFirst();
-            WeatherData weatherData = weatherUtils.processWeatherResponse(weatherForecastedData, new ArrayList<>(){{add(weatherForecastedData);}});
-            weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city, new ArrayList<>(){{add(weatherForecastedData);}});
-            BeanUtils.copyProperties(city, weatherData);
-            response.setWeatherData(weatherData);
-        } catch (NullPointerException e) {
-            log.error("Null pointer exception occurred: {}", e.getMessage());
-            throw new BaseException("Data retrieval error", HttpStatusCode.valueOf(500));
-        } catch (Exception e) {
-            log.error("An unexpected error occurred: {}", e.getMessage());
-            throw new BaseException("Unexpected error", HttpStatusCode.valueOf(500));
+        WeatherDataList weatherResponse = weatherUtils.getWeatherDataList(inputParam);
+        if(weatherResponse.getCod().equalsIgnoreCase(String.valueOf(HttpStatusCode.valueOf(200)))) {
+            try {
+                City city = weatherResponse.getCity();
+                response.setSunRise(weatherUtils.fetchTime(city.getSunRise(), city.getTimezone()));
+                response.setSunSet(weatherUtils.fetchTime(city.getSunSet(), city.getTimezone()));
+                BeanUtils.copyProperties(city.getCoordinates(), response.getCoordinates());
+                BeanUtils.copyProperties(city, response);
+                WeatherForecastedData weatherForecastedData = weatherResponse.getWeatherForecastedDataList().getFirst();
+                WeatherData weatherData = weatherUtils.processWeatherResponse(weatherForecastedData, new ArrayList<>() {{
+                    add(weatherForecastedData);
+                }});
+                weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city, new ArrayList<>() {{
+                    add(weatherForecastedData);
+                }});
+                BeanUtils.copyProperties(city, weatherData);
+                response.setWeatherData(weatherData);
+            } catch (Exception e) {
+                log.error("An unexpected error occurred: {}", e.getMessage());
+                throw new BaseException("Unexpected error", HttpStatusCode.valueOf(500));
+            }
         }
         return response;
     }

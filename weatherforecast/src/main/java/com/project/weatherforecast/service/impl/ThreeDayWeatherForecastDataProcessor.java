@@ -13,6 +13,7 @@ import com.project.weatherforecast.service.WeatherForecastDataProcessor;
 import com.project.weatherforecast.util.WeatherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -44,25 +45,32 @@ public class ThreeDayWeatherForecastDataProcessor extends AbstractWeatherDataPro
     public Object processWeatherData(WeatherDataList weatherDataList, Map<Object, List<WeatherForecastedData>> groupedData, Units unit) {
         ThreeDayForecastResponse response = new ThreeDayForecastResponse();
         List<WeatherData> weatherDataLinkedList = new LinkedList<>();
-        City city = weatherDataList.getCity();
-        weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
-            Map<String,Object> weatherMap = weatherUtils.fetchWeatherMap(
-                    weatherForecastedData, groupedData, weatherDataList);
-            List<WeatherForecastedData> weatherForecastedDataList = (List<WeatherForecastedData>) weatherMap.get("weatherForecastedDataList");
-            if(!ObjectUtils.isEmpty(weatherForecastedDataList)) {
-                weatherForecastedData = (WeatherForecastedData) weatherMap.get("forecastedData");
-                double avgTemp = (double) weatherMap.get("avgTemp");
-                WeatherData weatherData = weatherUtils.processWeatherResponse(
-                        weatherForecastedData, weatherForecastedDataList);
-                weatherData.setTemperature(avgTemp);
-                weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city, weatherForecastedDataList);
-                populateAdditionalFields(avgTemp, weatherData, weatherForecastedDataList, unit);
-                weatherDataLinkedList.add(weatherData);
+        if(weatherDataList.getCod().equalsIgnoreCase(String.valueOf(HttpStatusCode.valueOf(200)))) {
+            try {
+                City city = weatherDataList.getCity();
+                weatherDataList.getWeatherForecastedDataList().forEach(weatherForecastedData -> {
+                    Map<String, Object> weatherMap = weatherUtils.fetchWeatherMap(
+                            weatherForecastedData, groupedData, weatherDataList);
+                    List<WeatherForecastedData> weatherForecastedDataList = (List<WeatherForecastedData>) weatherMap.get("weatherForecastedDataList");
+                    if (!ObjectUtils.isEmpty(weatherForecastedDataList)) {
+                        weatherForecastedData = (WeatherForecastedData) weatherMap.get("forecastedData");
+                        double avgTemp = (double) weatherMap.get("avgTemp");
+                        WeatherData weatherData = weatherUtils.processWeatherResponse(
+                                weatherForecastedData, weatherForecastedDataList);
+                        weatherData.setTemperature(avgTemp);
+                        weatherData = weatherUtils.setDateTime(weatherData, weatherForecastedData, city, weatherForecastedDataList);
+                        populateAdditionalFields(avgTemp, weatherData, weatherForecastedDataList, unit);
+                        weatherDataLinkedList.add(weatherData);
+                    }
+                });
+                response.setWeatherData(weatherDataLinkedList);
+                response.setCountry(weatherDataList.getCity().getCountry());
+                response.setCityName(weatherDataList.getCity().getCityName());
+            } catch (Exception e) {
+                log.error("Exception occurred: {}", e.getMessage());
+                throw new BaseException(e.getMessage(), HttpStatusCode.valueOf(500));
             }
-        });
-        response.setWeatherData(weatherDataLinkedList);
-        response.setCountry(weatherDataList.getCity().getCountry());
-        response.setCityName(weatherDataList.getCity().getCityName());
+        }
         log.info("Exiting fetchThreeDayForecast");
         return response;
     }

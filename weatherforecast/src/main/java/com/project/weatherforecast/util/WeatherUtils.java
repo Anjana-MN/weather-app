@@ -6,6 +6,7 @@ import com.project.weatherforecast.bean.WeatherData;
 import com.project.weatherforecast.bean.data.*;
 import com.project.weatherforecast.constants.Constants;
 import com.project.weatherforecast.exception.BaseException;
+import com.project.weatherforecast.integration.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
