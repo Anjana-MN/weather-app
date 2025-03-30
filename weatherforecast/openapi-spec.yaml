@@ -1,0 +1,342 @@
+openapi: 3.0.1
+info:
+  title: WeatherForecast API
+  description: WeatherForecast API
+  contact:
+    name: Anjana
+    url: https://github.com/Anjana-MN
+    email: anjana.mn@publicissapient.com
+  version: "1.0"
+  x-api-repo: https://github.com/Anjana-MN/weather-app
+  x-owner:
+    name: Anjana
+    email: anjana.mn@publicissapient.com
+    url: https://github.com/Anjana-MN
+servers:
+  - url: https://api-dev.dev.dev-cglcloud.com/
+    description: Dev Server
+  - url: https://api-stage.stage.cglcloud.in
+    description: Stg Server
+  - url: https://api.cglcloud.com/
+    description: Prod Server
+security:
+  - OAuth2:
+      - "write: read"
+  - APIKEY:
+      - "write: read"
+paths:
+  /api/weather/forecast/timely:
+    get:
+      tags:
+        - Forecast
+      summary: Fetch Timely Forecast
+      operationId: getTimelyForecast
+      parameters:
+        - name: count
+          in: query
+          description: count
+          required: false
+          schema:
+            type: string
+            default: "5"
+        - name: city
+          in: query
+          description: city
+          required: true
+          schema:
+            type: string
+        - name: units
+          in: query
+          description: units
+          required: false
+          schema:
+            type: string
+            default: celsius
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/weather/forecast/threedays:
+    get:
+      tags:
+        - Forecast
+      summary: Fetch Forecast for Three Days
+      operationId: getWeatherForecastForNextThreeDays
+      parameters:
+        - name: count
+          in: query
+          description: count
+          required: false
+          schema:
+            type: string
+            default: "1"
+        - name: city
+          in: query
+          description: city
+          required: true
+          schema:
+            type: string
+        - name: units
+          in: query
+          description: units
+          required: false
+          schema:
+            type: string
+            default: celsius
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/weather/forecast/daily:
+    get:
+      tags:
+        - Forecast
+      summary: Fetch Daily Forecast
+      operationId: getDailyForecast
+      parameters:
+        - name: count
+          in: query
+          description: count
+          required: false
+          schema:
+            type: string
+            default: "25"
+        - name: city
+          in: query
+          description: city
+          required: true
+          schema:
+            type: string
+        - name: units
+          in: query
+          description: units
+          required: false
+          schema:
+            type: string
+            default: celsius
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/weather/forecast/current:
+    get:
+      tags:
+        - Forecast
+      summary: Fetch Current Weather
+      operationId: getCurrentWeatherData
+      parameters:
+        - name: count
+          in: query
+          description: count
+          required: false
+          schema:
+            type: string
+            default: "1"
+        - name: city
+          in: query
+          description: city
+          required: true
+          schema:
+            type: string
+        - name: units
+          in: query
+          description: units
+          required: false
+          schema:
+            type: string
+            default: celsius
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cache:
+    get:
+      tags:
+        - Cache
+      summary: Fetch Cache Keys
+      operationId: fetchCacheKeys
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cache/{key}:
+    get:
+      tags:
+        - Cache
+      summary: Fetch Cache Value For a Key
+      operationId: fetchCacheValue
+      parameters:
+        - name: key
+          in: path
+          description: key
+          required: true
+          schema:
+            type: string
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+components:
+  schemas: {}
