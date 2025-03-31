@@ -46,7 +46,7 @@ jobs:
         REDIS_PRIMARY_ENDPOINT: ${{ vars.REDIS_PRIMARY_ENDPOINT }}
       run: |
         echo "Redis port: $REDIS_PORT"
-        echo "API Key: $API_KEY"
+        echo "APP ID: $APP_ID"
         echo "Redis Primary Endpoint: $REDIS_PRIMARY_ENDPOINT"
 
     - name: Build with Gradle Wrapper
