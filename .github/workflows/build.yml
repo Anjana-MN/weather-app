@@ -13,6 +13,11 @@ on:
   # pull_request:
   #   branches: [ "master" ]
 
+env:
+  REDIS_PORT: ${{ vars.REDIS_PORT }}
+  APP_ID: ${{ vars.APP_ID }}
+  REDIS_PRIMARY_ENDPOINT: ${{ vars.REDIS_PRIMARY_ENDPOINT }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,18 +44,18 @@ jobs:
     - name: Ensure gradlew is executable
       run: chmod +x gradlew
 
-    - name: Set environment variables from secrets
-      env:
-        REDIS_PORT: ${{ vars.REDIS_PORT }}
-        APP_ID: ${{ vars.APP_ID }}
-        REDIS_PRIMARY_ENDPOINT: ${{ vars.REDIS_PRIMARY_ENDPOINT }}
+    - name: Debug environment variables
+#      env:
+#        REDIS_PORT: ${{ vars.REDIS_PORT }}
+#        APP_ID: ${{ vars.APP_ID }}
+#        REDIS_PRIMARY_ENDPOINT: ${{ vars.REDIS_PRIMARY_ENDPOINT }}
       run: |
         echo "Redis port: $REDIS_PORT"
         echo "APP ID: $APP_ID"
         echo "Redis Primary Endpoint: $REDIS_PRIMARY_ENDPOINT"
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build -DAPP_ID=${{ vars.APP_ID }} -DREDIS_PORT=${{ vars.REDIS_PORT }}
+      run: ./gradlew build
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
