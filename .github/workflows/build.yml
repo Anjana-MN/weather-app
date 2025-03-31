@@ -42,7 +42,7 @@ jobs:
     - name: Set environment variables from secrets
       env:
         REDIS_PORT: ${{ vars.REDIS_PORT }}
-        API_KEY: ${{ vars.API_KEY }}
+        $APP_ID: ${{ vars.$APP_ID }}
         REDIS_PRIMARY_ENDPOINT: ${{ vars.REDIS_PRIMARY_ENDPOINT }}
       run: |
         echo "Redis port: $REDIS_PORT"
