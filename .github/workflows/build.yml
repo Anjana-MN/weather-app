@@ -15,6 +15,9 @@ env:
   REDIS_PORT: ${{ vars.REDIS_PORT }}
   APP_ID: ${{ secrets.APP_ID }}
   REDIS_PRIMARY_ENDPOINT: ${{ vars.REDIS_PRIMARY_ENDPOINT }}
+  EC2 KEY: ${{ secrets.EC2_KEY }}
+  EC2_USER: ${{ secrets.EC2_USER }}
+  EC2_HOST: ${{ secrets.EC2_HOST }}
 
 jobs:
   build:
@@ -45,9 +48,9 @@ jobs:
         echo "Redis port: $REDIS_PORT"
         echo "APP ID: $APP_ID"
         echo "Redis Primary Endpoint: $REDIS_PRIMARY_ENDPOINT"
-        echo "EC2_KEY: $EC2_KEY"
-        echo "EC2_USER: $EC2_USER"
-        echo "EC2_HOST: $EC2_HOST"
+        echo "EC2 KEY: $EC2_KEY"
+        echo "EC2 USER: $EC2_USER"
+        echo "EC2 HOST: $EC2_HOST"
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
