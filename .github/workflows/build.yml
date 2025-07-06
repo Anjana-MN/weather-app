@@ -71,6 +71,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Ensure gradlew is executable
+        run: chmod +x gradlew
+
       - name: Build JAR with Gradle (again for deploy context)
         run: ./gradlew bootJar
 
