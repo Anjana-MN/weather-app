@@ -57,19 +57,42 @@ jobs:
     - name: Build with Gradle 8.9
       run: gradle build
 
-  dependency-submission:
-
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    needs: build  # Ensure the deployment runs after the build job
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build JAR with Gradle (again for deploy context)
+        run: ./gradlew bootJar
+
+      - name: Upload JAR to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT || '22' }}
+          source: build/libs/*.jar
+          target: ~/springboot-app/
+
+      - name: SSH into EC2 and restart app
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT || '22' }}
+          script: |
+            echo "Killing existing Spring Boot process if running..."
+            pkill -f 'java -jar' || true
+            echo "Starting new Spring Boot app..."
+            nohup java -jar ~/springboot-app/*.jar > ~/springboot-app/app.log 2>&1 &
