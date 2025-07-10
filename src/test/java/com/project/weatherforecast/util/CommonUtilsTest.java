@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,33 +44,33 @@ public class CommonUtilsTest {
         ReflectionTestUtils.setField(commonUtils,"appId","appId");
     }
 
-//    @Test
-//    public void testGet() throws IOException {
-//        WeatherDataList weatherDataList = new ObjectMapper()
-//                .readValue(new File("src/test/resources/json/MockWeatherDataList.json"),
-//                        WeatherDataList.class);
-//        Map<String,String> inputParam = new HashMap<>();
-//        inputParam.put("city","Bangalore");
-//        when(restTemplate.getForObject(
-//                "/api.openweathermap.org/data/2.5/forecast?appId=appId&q=Bangalore",WeatherDataList.class))
-//                .thenReturn(weatherDataList);
-//        assertNotNull(commonUtils.get(
-//                "/api.openweathermap.org/data/2.5/forecast?appId=",inputParam));
-//    }
+    @Test
+    public void testGet() throws IOException {
+        WeatherDataList weatherDataList = new ObjectMapper()
+                .readValue(new File("src/test/resources/json/MockWeatherDataList.json"),
+                        WeatherDataList.class);
+        Map<String,String> inputParam = new HashMap<>();
+        inputParam.put("city","Bangalore");
+        when(restTemplate.getForObject(
+                anyString(),any()))
+                .thenReturn(weatherDataList);
+        assertNotNull(commonUtils.get(
+                "/api.openweathermap.org/data/2.5/forecast?appId=",inputParam));
+    }
 
-//    @Test
-//    public void testGetResilience4j() throws IOException {
-//        WeatherDataList weatherDataList = new ObjectMapper()
-//                .readValue(new File("src/test/resources/json/MockWeatherDataList.json"),
-//                        WeatherDataList.class);
-//        Map<String,String> inputParam = new HashMap<>();
-//        inputParam.put("city","Bangalore");
-//        when(restTemplate.getForObject(
-//                "/api.openweathermap.org/data/2.5/forecast?appId=appId&q=Bangalore",WeatherDataList.class))
-//                .thenThrow(new RuntimeException());
-//        assertNotNull(commonUtils.get(
-//                "/api.openweathermap.org/data/2.5/forecast?appId=",inputParam));
-//    }
+    @Test
+    public void testGetResilience4j() throws IOException {
+        WeatherDataList weatherDataList = new ObjectMapper()
+                .readValue(new File("src/test/resources/json/MockWeatherDataList.json"),
+                        WeatherDataList.class);
+        Map<String,String> inputParam = new HashMap<>();
+        inputParam.put("city","Bangalore");
+        when(restTemplate.getForObject(
+                anyString(),any()))
+                .thenThrow(new RuntimeException());
+        assertThrows(Exception.class, ()->commonUtils.get(
+                "/api.openweathermap.org/data/2.5/forecast?appId=",inputParam));
+    }
 
     @Test
     public void testBuildQuery() {
