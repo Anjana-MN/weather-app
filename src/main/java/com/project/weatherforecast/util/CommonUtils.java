@@ -3,6 +3,7 @@ package com.project.weatherforecast.util;
 import com.project.weatherforecast.bean.data.WeatherDataList;
 import com.project.weatherforecast.exception.BaseException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,12 @@ public class CommonUtils {
     /** The appId */
     @Value("${weather.appid}")
     private String appId;
+
+    //added logs for debugging
+    @PostConstruct
+    public void init(){
+        log.info("App id is {}", appId);
+    }
 
     /**
      * fetches weather data
