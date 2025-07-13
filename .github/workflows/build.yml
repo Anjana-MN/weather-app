@@ -93,4 +93,5 @@ jobs:
             echo "Stopping existing Spring Boot process (if any)..."
             pkill -f 'java -jar' || true
             echo "Starting new Spring Boot app..."
-            nohup java -DAPP_ID=TEST123 -jar ~/springboot-app/*.jar > ~/springboot-app/app.log 2>&1 &
+            export APP_ID=${{ secrets.APP_ID }}
+            nohup java -jar ~/springboot-app/*.jar > ~/springboot-app/app.log 2>&1 &
