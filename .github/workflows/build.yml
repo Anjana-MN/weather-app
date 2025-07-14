@@ -105,6 +105,6 @@ jobs:
             echo "Stopping existing Spring Boot process (if any)..."
             pkill -f 'java -jar' || true
             echo "Starting new Spring Boot app..."
-            export APP_ID=TEST123 \
-            export REDIS_PRIMARY_ENDPOINT=localhost \
-            nohup java -jar ~/springboot-app/*.jar > ~/springboot-app/app.log 2>&1 &
+            export APP_ID=TEST123
+            export REDIS_PRIMARY_ENDPOINT=localhost
+            java -jar ~/springboot-app/*.jar > ~/springboot-app/app.log
