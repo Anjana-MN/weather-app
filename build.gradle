@@ -44,6 +44,11 @@ dependencies {
 	testImplementation group: 'org.mockito', name: 'mockito-core'
 }
 
+bootJar {
+	archiveFileName = 'weatherforecast-0.0.1-SNAPSHOT.jar'
+
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
