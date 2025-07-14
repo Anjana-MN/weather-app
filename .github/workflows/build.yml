@@ -90,6 +90,8 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT || '22' }}
           script: |
+            echo "Cleaning old JARs..."
+            rm -f ~/springboot-app/*.jar
             echo "Stopping existing Spring Boot process (if any)..."
             pkill -f 'java -jar' || true
             echo "Starting new Spring Boot app..."
