@@ -81,8 +81,7 @@ jobs:
           port: ${{ secrets.EC2_PORT || '22' }}
           script: |
             echo "Cleaning up old JARs..."
-            rm -f ~/springboot-app/*.jar   
-            rm -f ~/springboot-app/app.log
+            rm -f ~/springboot-app/*.jar
 
       - name: Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -94,7 +93,7 @@ jobs:
           source: "*.jar"
           target: "~/springboot-app/"
 
-      - name: SSH into EC2 and restart Spring Boot app
+      - name: Start Spring Boot app via script
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -102,9 +101,17 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT || '22' }}
           script: |
-            echo "Stopping existing Spring Boot process (if any)..."
-            pkill -f 'java -jar' || true
-            echo "Starting new Spring Boot app..."
-            export APP_ID=TEST123
+            export APP_ID=${{ secrets.APP_ID }}
             export REDIS_PRIMARY_ENDPOINT=localhost
-            java -jar ~/springboot-app/*.jar > ~/springboot-app/app.log
+            ~/springboot-app/start-app.sh
+
+      - name: Tail app.log to verify app started
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT || '22' }}
+          script: |
+            tail -n 30 ~/springboot-app/app.log
+
