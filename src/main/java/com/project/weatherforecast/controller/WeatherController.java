@@ -42,7 +42,7 @@ public class WeatherController {
      * @return response object
      * @throws BaseException BaseException
      */
-    @CrossOrigin(origins = {"http://localhost:3000","http://ec2-35-175-144-213.compute-1.amazonaws.com:8080"})
+    @CrossOrigin(origins = {"http://localhost:3000","http://35.175.144.213:3000"})
     @GetMapping("/threedays")
     @Operation( summary = "Fetch Forecast for Three Days",tags = "Forecast", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
@@ -81,7 +81,7 @@ public class WeatherController {
      * @return response object
      * @throws BaseException BaseException
      */
-    @CrossOrigin(origins = {"http://localhost:3000","http://ec2-35-175-144-213.compute-1.amazonaws.com:8080"})
+    @CrossOrigin(origins = {"http://localhost:3000","http://35.175.144.213:3000"})
     @GetMapping("/current")
     @Operation( summary = "Fetch Current Weather",tags = "Forecast", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
@@ -119,7 +119,7 @@ public class WeatherController {
      * @return response object
      * @throws BaseException BaseException
      */
-    @CrossOrigin(origins = {"http://localhost:3000","http://ec2-35-175-144-213.compute-1.amazonaws.com:8080"})
+    @CrossOrigin(origins = {"http://localhost:3000","http://35.175.144.213:3000"})
     @GetMapping("/timely")
     @Operation( summary = "Fetch Timely Forecast",tags = "Forecast", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
@@ -159,7 +159,7 @@ public class WeatherController {
      * @return response object
      * @throws BaseException BaseException
      */
-    @CrossOrigin(origins = {"http://localhost:3000","http://ec2-35-175-144-213.compute-1.amazonaws.com:8080"})
+    @CrossOrigin(origins = {"http://localhost:3000","http://35.175.144.213:3000"})
     @GetMapping("/daily")
     @Operation( summary = "Fetch Daily Forecast",tags = "Forecast", method = Constants.GET)
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
